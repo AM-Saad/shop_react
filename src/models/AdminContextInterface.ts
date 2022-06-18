@@ -2,7 +2,7 @@ import Product from './Product';
 import ProductResponse from './ProductResponse';
 import Category from './Category';
 import Meta from './Meta';
-import AuthContext from './AuthContextInterface';
+import AuthContext from './UserContextInterface';
 
 
 

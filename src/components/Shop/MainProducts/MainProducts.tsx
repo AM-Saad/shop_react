@@ -14,7 +14,7 @@ export default function MainProducts() {
   const [products, setProducts] = useState<Product[]>([])
   const { url } = useContext(AuthContext)
   const set_products = (data: HookResponse<ProductResponse[]>) => {
-    setProducts(data.items)
+    setProducts(data.items!)
   }
   const fetchProducts = () => {
     fetch_products({ url: `${url}/products?featured=false` }, set_products)

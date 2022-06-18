@@ -71,6 +71,7 @@ const ProductDetail = () => {
     const changeAttr = (attributes: SelectedAttribute[], price: number) => {
         dispatchCartState({ type: ActionKind.UPDATE_CART, value: { ...cartState, attributes: attributes, price: price } })
     }
+
     const addToCart = (e: any) => {
         e.preventDefault()
         add_to_cart!({ productId: product?._id, attributes: cartState.attributes, quantity: 1 })

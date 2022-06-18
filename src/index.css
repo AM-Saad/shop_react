@@ -22,6 +22,10 @@ code {
   font-family: 'Kalam', cursive;
 
 }
+
+.aspect-ratio{
+  aspect-ratio: 1;
+}
 /* Chrome, Safari, Edge, Opera */
 .quantity-input::-webkit-outer-spin-button,
 .quantity-input::-webkit-inner-spin-button {

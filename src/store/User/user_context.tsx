@@ -1,14 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from "react-router-dom"
-import { AuthContextInterface, AuthMeta } from '../../models/AuthContextInterface'
+import { UserContextInterface, AuthMeta } from '../../models/UserContextInterface'
 import Meta from '../../models/Meta'
 import { Cart } from '../../models/Cart'
-import Product from '../../models/ProductResponse'
+import Pagination from '../../models/Pagination'
 
-const UserContext = React.createContext<AuthContextInterface>({
+const initialPagination = {
+    itemsPerPage: 1,
+    currentPage: 1,
+    hasNextPage: false,
+    hasPrevPage: false,
+    lastPage: 1,
+    nextPage: 2,
+    prevPage: 0,
+    total: 0,
+    skip: 0
+}
+
+const UserContext = React.createContext<UserContextInterface>({
     url: 'http://localhost:8000',
     isLoggedIn: false,
     authMeta: { user: null, token: null, loading: false, error: null },
+    pagination: initialPagination,
+    update_pagination: (data: Pagination) => { },
     cart: null,
     onLogin: (email: string, password: string) => { },
     onLogout: () => { },
@@ -27,6 +41,7 @@ export const UserCotextProvider: React.FC<{ children?: React.ReactNode; }> = (pr
     const [isLoggedIn, setIsLoggedIn] = useState(true)
     const [authMeta, setAuthMeta] = useState<AuthMeta>({ user: null, token: null, loading: false, error: null })
     const [cartMeta, setCartMeta] = useState<Meta>({ loading: false, error: null })
+    const [pagination, setPagination] = useState<Pagination>(initialPagination)
     const [cartIsOpen, setCartIsOpen] = useState<boolean>(false)
     const [cart, setCart] = useState<Cart | null>(null)
     let history = useHistory()
@@ -235,6 +250,12 @@ export const UserCotextProvider: React.FC<{ children?: React.ReactNode; }> = (pr
 
         }
     }
+
+    const update_pagination = async (data: Pagination) => {
+        return setPagination(data)
+
+
+    }
     const logout = () => {
         setIsLoggedIn(false)
         localStorage.removeItem('uid')
@@ -246,7 +267,24 @@ export const UserCotextProvider: React.FC<{ children?: React.ReactNode; }> = (pr
 
 
     const authContext = {
-        onLogin: login, onLogout: logout, onSignup: signup, getMe: getMe, get_cart, add_to_cart, cart, cartMeta, toggle_cart, update_cart_item, delete_cart_item, cartIsOpen, search_products, isLoggedIn: isLoggedIn, authMeta: authMeta, url: 'http://localhost:8000'
+        onLogin: login,
+        onLogout: logout,
+        onSignup: signup,
+        getMe,
+        get_cart,
+        add_to_cart,
+        cart,
+        cartMeta,
+        toggle_cart,
+        update_cart_item,
+        delete_cart_item,
+        cartIsOpen,
+        search_products,
+        isLoggedIn: isLoggedIn,
+        authMeta,
+        pagination,
+        update_pagination,
+        url: 'http://localhost:8000'
     }
 
     useEffect(() => {
