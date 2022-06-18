@@ -7,12 +7,13 @@ import useHttp from '../../../hooks/use-http'
 import ProductItem from './ProductItem'
 import FetchError from '../../Common/FetchError'
 import Loading from './Loading'
-
+import HookResponse from '../../../models/HookResponse'
+import ProductResponse from '../../../models/ProductResponse'
 export default function MainProducts() {
   const { sendRequest: fetch_products, isLoading, error } = useHttp()
   const [products, setProducts] = useState<Product[]>([])
   const { url } = useContext(AuthContext)
-  const set_products = (data: any) => {
+  const set_products = (data: HookResponse<ProductResponse[]>) => {
     setProducts(data.items)
   }
   const fetchProducts = () => {

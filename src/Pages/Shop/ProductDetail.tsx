@@ -8,6 +8,8 @@ import UserContext from '../../store/User/user_context'
 import ProductGallery from '../../components/Shop/Product/ProductGallery'
 import ProductAttributes from '../../components/Shop/Product/Attributes'
 import NotFound from '../../components/Shop/Product/NotFound'
+import HookResponse from '../../models/HookResponse'
+import ProductResponse from '../../models/ProductResponse'
 
 const reviews = { href: '#', average: 4, totalCount: 117 }
 
@@ -51,7 +53,7 @@ const ProductDetail = () => {
     const [product, setProduct] = useState<Product>()
     const [cartState, dispatchCartState] = useReducer(cartReducer, { id: null, attributes: [], name: null, quantity: null, price: null })
 
-    const set_product = (data: any) => {
+    const set_product = (data: HookResponse<ProductResponse[]>) => {
         let product = data.items[0]
         setProduct(product)
         if (product) {
@@ -69,17 +71,14 @@ const ProductDetail = () => {
     const changeAttr = (attributes: SelectedAttribute[], price: number) => {
         dispatchCartState({ type: ActionKind.UPDATE_CART, value: { ...cartState, attributes: attributes, price: price } })
     }
-
     const addToCart = (e: any) => {
         e.preventDefault()
         add_to_cart!({ productId: product?._id, attributes: cartState.attributes, quantity: 1 })
     }
 
-
     const getProduct = useCallback(() => {
         return fetch_product({ url: `${url}/products/?slug=${slug}` }, set_product)
     }, [slug, fetch_product, url]);
-
 
     useEffect(() => {
         getProduct()
