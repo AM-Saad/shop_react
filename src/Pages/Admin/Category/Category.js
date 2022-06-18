@@ -12,7 +12,7 @@ const Product = (props) => {
         if (token) {
             fetch_category(id, token)
         }
-    }, [token, id, fetch_category])
+    }, [token, id])
 
     if (categoryMeta.loading) {
         return <p>Loading...</p>

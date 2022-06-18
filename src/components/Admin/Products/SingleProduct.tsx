@@ -56,6 +56,7 @@ const SingleProduct: React.FC<{ product: Product }> = (props) => {
           <EditableInput label='Price' inputType="number" onSave={(value: string | number) => adminCtx.update_partial_product([{ 'info.price': value }], token)} defaultVal={product.info.price} loading={updatingMeta.loading} />
           <EditableInput label='Quantity' inputType="number" onSave={(value: string | number) => adminCtx.update_partial_product([{ 'info.quantity': value }], token)} defaultVal={product.info.quantity} loading={updatingMeta.loading} />
           <EditableInput label='Description' inputType="text" onSave={(value: string | number) => adminCtx.update_partial_product([{ description: value }], token)} defaultVal={product.description} loading={updatingMeta.loading} />
+          <EditableInput label='Details' inputType="text" onSave={(value: string | number) => adminCtx.update_partial_product([{ details: value }], token)} defaultVal={product.details} loading={updatingMeta.loading} />
           <EditProductCategory defaultVal={product.category} loading={updatingMeta.loading} onSave={(value: any) => adminCtx.update_partial_product([{ category: value }], token)} />
           <EditProductAttribute defaultVal={product.attributes} loading={updatingMeta.loading} onSave={(value: any) => adminCtx.update_partial_product([{ attributes: value }], token)} />
           <div className='flex gap-5 items-center border-b-2'>

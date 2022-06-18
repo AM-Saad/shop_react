@@ -39,7 +39,7 @@ export default function AdminNav(props) {
     return (
         <>
  
-            <div className="h-full flex">
+            <div className="h-screen flex">
                 {/* Narrow sidebar */}
                 <div className="hidden w-28 bg-indigo-700 overflow-y-auto md:block">
                     <div className="w-full py-6 flex flex-col items-center">

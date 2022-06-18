@@ -14,7 +14,7 @@ const Categories = () => {
             fetch_categories(token)
         }
 
-    }, [token, fetch_categories])
+    }, [token])
 
     if (categoryMeta.loading) {
         return <p>Loading...</p>

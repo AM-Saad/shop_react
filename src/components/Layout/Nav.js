@@ -16,10 +16,7 @@ const Nav = (props) => {
 
 
     const Links = [
-        <Link
-            className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
 
-            to='/' key='home'>Home </Link>,
         <Link
             className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
             key='shop'
@@ -64,18 +61,10 @@ const Nav = (props) => {
                         <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
                             <div className="flex justify-between items-center h-16">
                                 <div className="flex px-2 lg:px-0">
-                                    <div className="flex-shrink-0 flex items-center">
-                                        <img
-                                            className="block lg:hidden h-8 w-auto"
-                                            src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg"
-                                            alt="Workflow"
-                                        />
-                                        <img
-                                            className="hidden lg:block h-8 w-auto"
-                                            src="https://tailwindui.com/img/logos/workflow-logo-indigo-600-mark-gray-800-text.svg"
-                                            alt="Workflow"
-                                        />
-                                    </div>
+                                    <Link to="/" className="flex-shrink-0 flex items-center">
+                                    <h1 className='logo-font text-2xl'>Hdom Factory</h1>
+
+                                    </Link>
                                     <div className="hidden lg:ml-6 lg:flex lg:space-x-8">
                                         {/* Current: "border-indigo-500 text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" */}
                                         {Links.map(link => link)}

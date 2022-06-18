@@ -15,7 +15,6 @@ const Categories: React.FC = () => {
     }
     const fetchCategory = () => {
         fetch_category({ url: `${url}/categories` }, update_category)
-
     }
 
     useEffect(() => {

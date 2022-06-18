@@ -1,7 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+@import url('https://fonts.googleapis.com/css2?family=Coming+Soon&family=Courgette&family=Indie+Flower&display=swap');
 
 body {
   margin: 0;
@@ -18,6 +18,12 @@ code {
 }
 
 
+.logo-font{
+  font-family: 'Coming Soon', cursive;
+font-family: 'Courgette', cursive;
+font-family: 'Indie Flower', cursive;
+
+}
 /* Chrome, Safari, Edge, Opera */
 .quantity-input::-webkit-outer-spin-button,
 .quantity-input::-webkit-inner-spin-button {
