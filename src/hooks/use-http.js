@@ -12,13 +12,15 @@ const useHttp = () => {
         headers: reqConfig.headers ? reqConfig.headers : {},
         body: reqConfig.body ? JSON.stringify(reqConfig.body) : null,
       })
-      setIsLoading(false)
 
       const data = await response.json()
       if (response.status === 200 || response.status === 201) {
-        return dataLoaded(data)
+        dataLoaded(data)
+      } else {
+        setError(data.message)
       }
-      setError(data.message)
+      setIsLoading(false)
+
     } catch (error) {
       setIsLoading(false)
       setError(error.message || 'Something went wrong')

@@ -16,9 +16,7 @@ function classNames(...classes: any) {
     return classes.filter(Boolean).join(' ')
 }
 
-
 const ProductAttributes: React.FC<Props> = ({ selectedAttributes = [], productAttributes = [], productPrice, loading, onChange }) => {
-
 
     const changeAttr = (attribute: Attribute, val: { _id: string, name: string, price: string, quantity: number }) => {
         const attributes: SelectedAttribute[] = selectedAttributes
@@ -41,7 +39,7 @@ const ProductAttributes: React.FC<Props> = ({ selectedAttributes = [], productAt
 
                 {selectedAttributes && selectedAttributes.length > 0 && productAttributes.map((attribute: Attribute, idx: number) => <div key={attribute.name} className="mt-10">
                     <div className="flex items-center justify-between">
-                        <h3 className="text-sm text-gray-900 font-medium">{attribute.name} {selectedAttributes[idx].option}</h3>
+                        <h3 className="text-sm text-gray-900 font-medium">{attribute.name}</h3>
                     </div>
 
                     <RadioGroup value={selectedAttributes && selectedAttributes[idx]?.name} onChange={(val) => { return }} className="mt-4">

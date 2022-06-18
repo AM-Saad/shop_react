@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useReducer, useContext } from "react";
 
-import AuthContext from "../store/User/user_context";
+import AuthContext from "../../store/User/user_context";
 
 
 enum ActionKind {

@@ -1,13 +1,13 @@
 import { useContext, useEffect, useState, useCallback, useReducer } from 'react'
 import { useParams } from 'react-router-dom'
-import Product from '../models/ProductResponse'
-import Attribute, { SelectedAttribute } from '../models/Attribute'
-import useHttp from '../hooks/use-http'
+import Product from '../../models/ProductResponse'
+import Attribute, { SelectedAttribute } from '../../models/Attribute'
+import useHttp from '../../hooks/use-http'
 import { StarIcon } from '@heroicons/react/solid'
-import UserContext from '../store/User/user_context'
-import ProductGallery from '../components/Shop/Product/ProductGallery'
-import ProductAttributes from '../components/Shop/Product/Attributes'
-import NotFound from '../components/Shop/Product/NotFound'
+import UserContext from '../../store/User/user_context'
+import ProductGallery from '../../components/Shop/Product/ProductGallery'
+import ProductAttributes from '../../components/Shop/Product/Attributes'
+import NotFound from '../../components/Shop/Product/NotFound'
 
 const reviews = { href: '#', average: 4, totalCount: 117 }
 
@@ -49,22 +49,11 @@ const ProductDetail = () => {
     const { url, add_to_cart } = useContext(UserContext)
     const { sendRequest: fetch_product, isLoading, error } = useHttp()
     const [product, setProduct] = useState<Product>()
-
-    // const [colors, setColors] = useState<any[] | null>(null)
-    // const [attrsWithoutColors, setAttrsWithoutColors] = useState<any[] | null>(null)
-
-
     const [cartState, dispatchCartState] = useReducer(cartReducer, { id: null, attributes: [], name: null, quantity: null, price: null })
 
     const set_product = (data: any) => {
         let product = data.items[0]
         setProduct(product)
-
-        // const colorsExist = product.attributes.find((i: Attribute) => i.name.toLowerCase() === 'colors' || i.name.toLowerCase() === 'color')
-        // if (colorsExist) setColors(colorsExist.options)
-
-        // const attrsWithoutColors = product.attributes.filter((i: Attribute) => i.name.toLowerCase() !== 'colors' && i.name.toLowerCase() !== 'color')
-        // setAttrsWithoutColors(attrsWithoutColors)
         if (product) {
             const initAttributes = product.attributes.map((i: any) => ({
                 _id: i._id,
@@ -77,7 +66,6 @@ const ProductDetail = () => {
         }
     }
 
-
     const changeAttr = (attributes: SelectedAttribute[], price: number) => {
         dispatchCartState({ type: ActionKind.UPDATE_CART, value: { ...cartState, attributes: attributes, price: price } })
     }
@@ -85,25 +73,23 @@ const ProductDetail = () => {
     const addToCart = (e: any) => {
         e.preventDefault()
         add_to_cart!({ productId: product?._id, attributes: cartState.attributes, quantity: 1 })
-
     }
+
+
     const getProduct = useCallback(() => {
         return fetch_product({ url: `${url}/products/?slug=${slug}` }, set_product)
     }, [slug, fetch_product, url]);
 
+
     useEffect(() => {
         getProduct()
-
     }, [])
-
 
     if (!isLoading && error) {
         return <div className='p-3 border-2 border-red-200 my-4'><p className='text-red-400'>{error}</p></div>
     }
     if (!isLoading && !error && !product) {
-        return <>
-            <NotFound />
-        </>
+        return <NotFound />
     }
 
     return (
@@ -121,7 +107,7 @@ const ProductDetail = () => {
                     {/* Options */}
                     <div className="mt-4 lg:mt-0 lg:row-span-3">
                         <h2 className="sr-only">Product information</h2>
-                        <p className="text-3xl text-gray-900">{cartState?.price} $</p>
+                        <p className="text-3xl text-gray-900">{cartState?.price || '....'} $</p>
 
                         {/* Reviews */}
                         <div className="mt-6">
@@ -147,40 +133,7 @@ const ProductDetail = () => {
                         </div>
 
                         <form className="mt-10">
-                            {/* Colors */}
-                            {/* <div>
-                                <h3 className="text-sm text-gray-900 font-medium">Color</h3>
 
-                                <RadioGroup value={''} onChange={() => { }} className="mt-4">
-                                    <RadioGroup.Label className="sr-only">Choose a color</RadioGroup.Label>
-                                    <div className="flex items-center space-x-3">
-                                        {colors && colors.map((color) => (
-                                            <RadioGroup.Option
-                                                key={color.name}
-                                                value={color}
-                                                className={({ active, checked }) =>
-                                                    classNames(
-                                                        color.selectedClass,
-                                                        active && checked ? 'ring ring-offset-1' : '',
-                                                        !active && checked ? 'ring-2' : '',
-                                                        '-m-0.5 relative p-0.5 rounded-full flex items-center justify-center cursor-pointer focus:outline-none'
-                                                    )
-                                                }
-                                            >
-                                                <RadioGroup.Label as="span" className="sr-only">
-                                                    {color.name}
-                                                </RadioGroup.Label>
-                                                <span
-                                                    aria-hidden="true"
-                                                    className={`h-8 w-8 border border-black border-opacity-10 rounded-full bg-${color.name.toLowerCase()}-500`}
-                                                />
-                                            </RadioGroup.Option>
-                                        ))}
-                                    </div>
-                                </RadioGroup>
-                            </div> */}
-
-                            {/* Sizes */}
                             <ProductAttributes loading={isLoading} productAttributes={product?.attributes || []} selectedAttributes={cartState?.attributes || []} productPrice={product?.info.price || 0} onChange={changeAttr} />
 
                             {!isLoading && <button
@@ -191,8 +144,8 @@ const ProductDetail = () => {
                                 Add to bag
                             </button>}
                             {isLoading && <button
-                                type="submit"
-                                className="opacity-50 mt-10 w-full bg-indigo-600 border border-transparent rounded-md py-3 px-8 flex items-center justify-center text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                type="button"
+                                className="opacity-50 mt-10 w-full bg-indigo-600 border border-transparent rounded-md py-3 px-8 flex items-center justify-center text-base font-medium text-white  focus:outline-none"
                             >
                                 Loading...
                             </button>}
@@ -200,12 +153,11 @@ const ProductDetail = () => {
                     </div>
 
                     <div className="py-10 lg:pt-6 lg:pb-16 lg:col-start-1 lg:col-span-2 lg:border-r lg:border-gray-200 lg:pr-8">
-                        {/* Description and details */}
                         <div>
                             <h3 className="sr-only">Description</h3>
 
                             <div className="space-y-6">
-                                <p className="text-base text-gray-900">{product?.description}</p>
+                                <p className="text-base text-gray-900">{product?.description || 'Loading...'}</p>
                             </div>
                         </div>
 
