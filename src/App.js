@@ -3,6 +3,7 @@ import { Route, Switch } from 'react-router-dom'
 
 import Login from './Pages/Shop/Login.tsx'
 import Shop from './Pages/Shop/Shop'
+import Category from './Pages/Shop/Category'
 import AdminLogin from './Pages/Admin/Login'
 import Products from './Pages/Admin/Product/Products'
 import Product from './Pages/Admin/Product/Product'
@@ -10,7 +11,7 @@ import AddProduct from './Pages/Admin/Product/AddProduct'
 import ProductDetail from './Pages/Shop/ProductDetail'
 import AddCategory from './Pages/Admin/Category/AddCategory'
 import Categories from './Pages/Admin/Category/Categories'
-import Category from './Pages/Admin/Category/Category'
+import AdminCategory from './Pages/Admin/Category/Category'
 
 import NotFound from './Pages/NotFound'
 import Nav from './components/Layout/Nav'
@@ -35,7 +36,7 @@ function App() {
                   <PrivateRoute path="/admin/products/:slug">  <Product /> </PrivateRoute>
                   <PrivateRoute path="/admin/products">  <Products /> </PrivateRoute>
                   <PrivateRoute path="/admin/category/new">  <AddCategory /> </PrivateRoute>
-                  <PrivateRoute path="/admin/category/:id">  <Category /> </PrivateRoute>
+                  <PrivateRoute path="/admin/category/:id">  <AdminCategory /> </PrivateRoute>
                   <PrivateRoute path="/admin/category">  <Categories /> </PrivateRoute>
                   <Route path="/admin/login">  <AdminLogin /> </Route>
                 </Switch>
@@ -48,6 +49,7 @@ function App() {
           <UserCotextProvider>
             <Nav>
               <Switch>
+                <Route path='/category/:name' component={Category} />
                 <Route path='/products/:slug' component={ProductDetail} />
                 <Route path='/' component={Shop} />
                 <Route path='/shop' component={Shop} />

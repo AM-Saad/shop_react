@@ -1,10 +1,20 @@
 import { useState, useCallback } from "react"
+import HookResponse from '../models/HookResponse'
+
+interface Config {
+  url: string;
+  method?: string;
+  headers?: {}
+  body?: {}
+}
+
+
 
 const useHttp = () => {
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState(null)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [error, setError] = useState<string | null>(null)
 
-  const sendRequest = async (reqConfig, dataLoaded) => {
+  const sendRequest = async <T>(reqConfig: Config, dataLoaded: (data: HookResponse<T>) => void) => {
     setIsLoading(true)
     try {
       const response = await fetch(reqConfig.url, {
@@ -21,7 +31,7 @@ const useHttp = () => {
       }
       setIsLoading(false)
 
-    } catch (error) {
+    } catch (error: any) {
       setIsLoading(false)
       setError(error.message || 'Something went wrong')
 
