@@ -5,11 +5,23 @@ import { useHistory } from "react-router-dom"
 
 import AdminContextInterface from '../../models/AdminContextInterface';
 import ProductResponse from '../../models/ProductResponse';
+import Pagination from '../../models/Pagination';
 import Category from '../../models/Category';
 import Meta from '../../models/Meta';
-import { AuthMeta } from '../../models/AuthContextInterface'
-
+import { AuthMeta } from '../../models/UserContextInterface'
+const initialPagination = {
+    itemsPerPage: 1,
+    currentPage: 1,
+    hasNextPage: false,
+    hasPrevPage: false,
+    lastPage: 1,
+    nextPage: 2,
+    prevPage: 0,
+    total: 0,
+    skip: 0,
+}
 const AdminContext = React.createContext<AdminContextInterface>({
+    pagination: initialPagination,
     products: [],
     productsMeta: { loading: false, error: null },
     currentProduct: null,
@@ -45,6 +57,7 @@ export const AdminContextProvider: React.FC<{ children?: React.ReactNode; }> = (
     const [productsMeta, setProductsMeta] = useState<Meta>({ loading: false, error: null })
     const [products, setProducts] = useState([])
     const [currentProduct, setCurrentProduct] = useState<ProductResponse | null>(null)
+    const [pagination, setPagination] = useState<Pagination>(initialPagination)
 
     const [currentCategory, setCurrentCategory] = useState<Category | null>(null)
     const [categoryMeta, setCategoryMeta] = useState<Meta>({ loading: false, error: null })
@@ -436,9 +449,30 @@ export const AdminContextProvider: React.FC<{ children?: React.ReactNode; }> = (
         }
     }, [])
     const adminContext = {
-        fetch_products, fetch_product, update_partial_product, delete_product, productsMeta, products, currentProduct,
-        categoryMeta, categories, currentCategory, fetch_categories, fetch_category, delete_category, update_partial_category, upload_image, delete_image, updatingMeta,
-        onLogin: login, onLogout: logout, getMe: getMe, isLoggedIn: isLoggedIn, authMeta: authMeta, url: 'http://localhost:8000'
+        fetch_products,
+        fetch_product,
+        update_partial_product,
+        delete_product,
+        productsMeta,
+        products,
+        currentProduct,
+        categoryMeta,
+        categories,
+        currentCategory,
+        fetch_categories,
+        fetch_category,
+        delete_category,
+        update_partial_category,
+        upload_image,
+        delete_image,
+        updatingMeta,
+        onLogin: login,
+        onLogout: logout,
+        getMe: getMe,
+        isLoggedIn: isLoggedIn,
+        authMeta,
+        pagination,
+        url: 'http://localhost:8000'
     }
 
 
