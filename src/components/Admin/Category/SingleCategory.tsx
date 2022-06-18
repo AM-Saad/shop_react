@@ -14,9 +14,10 @@ const SingleCategory: React.FC<{ category: Category }> = (props) => {
   const adminCtx = useContext(AdminContext)
   const authCtx = useContext(AuthContext)
 
-  const { token } = authCtx.authMeta
-  const { updatingMeta } = adminCtx
+  const { token } = adminCtx.authMeta
 
+  const { updatingMeta } = adminCtx
+  
 
   const [imageFiles, setImageFiles] = useState<[]>([])
   const childFunc = React.useRef<any>(null)
