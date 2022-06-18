@@ -214,7 +214,6 @@ const ProductDetail = () => {
 
                             <div className="mt-4 space-y-6">
                                 <p className="text-sm text-gray-600">{product?.details}</p>
-                                <div dangerouslySetInnerHTML={{__html: product!.details}}></div>
 
                             </div>
                         </div>

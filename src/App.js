@@ -31,32 +31,32 @@ function App() {
       <Switch>
 
 
-        <Route exact path="/admin/:path?">
+        <Route path="/admin/:path?">
           <NotificationModalProvider>
             <AdminContextProvider>
               <AdminNav>
                 <Switch>
-                  <PrivateRoute exact path="/admin/products/new/">  <AddProduct /> </PrivateRoute>
-                  <PrivateRoute exact path="/admin/products/:slug">  <Product /> </PrivateRoute>
-                  <PrivateRoute exact path="/admin/products">  <Products /> </PrivateRoute>
+                  <PrivateRoute path="/admin/products/new/">  <AddProduct /> </PrivateRoute>
+                  <PrivateRoute path="/admin/products/:slug">  <Product /> </PrivateRoute>
+                  <PrivateRoute path="/admin/products">  <Products /> </PrivateRoute>
                   <PrivateRoute path="/admin/category/new">  <AddCategory /> </PrivateRoute>
                   <PrivateRoute path="/admin/category/:id">  <Category /> </PrivateRoute>
                   <PrivateRoute path="/admin/category">  <Categories /> </PrivateRoute>
-                  <Route exact path="/admin/login">  <AdminLogin /> </Route>
+                  <Route path="/admin/login">  <AdminLogin /> </Route>
                 </Switch>
               </AdminNav>
             </AdminContextProvider>
           </NotificationModalProvider>
         </Route>
 
-        <Route  exact>
+        <Route  >
           <UserCotextProvider>
             <Nav>
               <Switch>
-                <Route exact path='/products/:slug' component={ProductDetail} />
-                <Route exact path='/' component={Shop} />
-                <Route exact path='/shop' component={Shop} />
-                <Route exact path='/login' component={Login} />
+                <Route path='/products/:slug' component={ProductDetail} />
+                <Route path='/' component={Shop} />
+                <Route path='/shop' component={Shop} />
+                <Route path='/login' component={Login} />
               </Switch>
             </Nav>
           </UserCotextProvider>
@@ -68,28 +68,28 @@ function App() {
 
       </Switch>
       {/* <Switch>
-        <Route exact path="/login" render={() => (<Login />)} />
-        <Route exact path="/signup" render={() => (
+        <Route  path="/login" render={() => (<Login />)} />
+        <Route  path="/signup" render={() => (
           !ctx.isLoggedIn ? (
             <SignUp />
           ) : (
             <Redirect to="/" />
           )
         )} />
-        <Route exact path="/" component={Shop}  >
+        <Route  path="/" component={Shop}  >
           <Shop />
         </Route>
-        <Route exact path="/shop" component={Shop}  >
+        <Route  path="/shop" component={Shop}  >
           <Shop />
         </Route>
 
-        <Route exact path="/product/:slug" component={ProductDetail}  >
+        <Route  path="/product/:slug" component={ProductDetail}  >
           <ProductDetail />
         </Route>
 
         <NotificationModalProvider>
           <AdminContextProvider>
-            <Route exact path="/admin/login/" component={Login} ><Login /></Route>
+            <Route  path="/admin/login/" component={Login} ><Login /></Route>
             <PrivateRoute path="/admin/products/">  <Products /> </PrivateRoute>
             <PrivateRoute path="/admin/products/:slug">  <Product /> </PrivateRoute>
             <PrivateRoute path="/admin/products/new">  <AddProduct /> </PrivateRoute>
@@ -97,13 +97,13 @@ function App() {
             <PrivateRoute path="/admin/category">  <Categories /> </PrivateRoute>
             <PrivateRoute path="/admin/category/:id">  <Category /> </PrivateRoute>
 
-            <Route path='/admin/:path?' exact>
+            <Route path='/admin/:path?' >
               <AdminNav>
                 <Switch>
-                  <Route exact path='/admin/products' component={Products} />
-                  <Route exact path='/admin/products/:slug' component={Product} />
-                  <Route exact path='/admin/category' component={Categories} />
-                  <Route exact path='/admin/category/:id' component={Category} />
+                  <Route  path='/admin/products' component={Products} />
+                  <Route  path='/admin/products/:slug' component={Product} />
+                  <Route  path='/admin/category' component={Categories} />
+                  <Route  path='/admin/category/:id' component={Category} />
 
                 </Switch>
               </AdminNav>
