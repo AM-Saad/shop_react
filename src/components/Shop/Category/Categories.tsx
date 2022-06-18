@@ -5,12 +5,12 @@ import Category from '../../../models/Category'
 import UserContext from '../../../store/User/user_context'
 import FetchError from '../../Common/FetchError'
 import Loading from './Loading'
-
+import HookResponse from '../../../models/HookResponse'
 const Categories: React.FC = () => {
     const { sendRequest: fetch_category, isLoading, error } = useHttp()
     const [categories, setCategories] = useState<Category[]>([])
     const { url } = useContext(UserContext)
-    const update_category = (data: any) => {
+    const update_category = (data: HookResponse<Category[]>) => {
         setCategories(data.items)
     }
     const fetchCategory = () => {
@@ -23,7 +23,6 @@ const Categories: React.FC = () => {
 
     return (
         <>
-
             <div className="max-w-7xl mx-auto">
                 <div className="max-w-2xl mx-auto py-8 lg:max-w-none">
                     <h2 className="text-2xl font-extrabold text-gray-900 mb-5">Collections</h2>
