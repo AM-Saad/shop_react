@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState, useCallback, useReducer } from 'react'
 import { useParams } from 'react-router-dom'
 import Product from '../../models/ProductResponse'
-import Attribute, { SelectedAttribute } from '../../models/Attribute'
+import  { SelectedAttribute } from '../../models/Attribute'
 import useHttp from '../../hooks/use-http'
 import { StarIcon } from '@heroicons/react/solid'
 import UserContext from '../../store/User/user_context'
@@ -10,6 +10,7 @@ import ProductAttributes from '../../components/Shop/Product/Attributes'
 import NotFound from '../../components/Shop/Product/NotFound'
 import HookResponse from '../../models/HookResponse'
 import ProductResponse from '../../models/ProductResponse'
+import FetchError from '../../components/Common/FetchError'
 
 const reviews = { href: '#', average: 4, totalCount: 117 }
 
@@ -86,14 +87,14 @@ const ProductDetail = () => {
     }, [])
 
     if (!isLoading && error) {
-        return <div className='p-3 border-2 border-red-200 my-4'><p className='text-red-400'>{error}</p></div>
+        return <FetchError error={error} reload={getProduct} />
     }
     if (!isLoading && !error && !product) {
         return <NotFound />
     }
 
     return (
-        <div className="bg-white">
+        <div className="bg-white py-16">
             <div className="pt-6">
 
 

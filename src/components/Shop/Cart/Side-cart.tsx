@@ -1,12 +1,13 @@
-import { Fragment, useContext, } from 'react'
+import { Fragment, useContext, useEffect, } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { XIcon } from '@heroicons/react/outline'
 import UserContext from '../../../store/User/user_context'
 import CartItem from './CartProductItem'
 import Loading from './Loading'
+import FetchError from '../../Common/FetchError'
 
-const SideCart: React.FC = (props) => {
-    const { cart, cartMeta, cartIsOpen, toggle_cart } = useContext(UserContext)
+const SideCart: React.FC = () => {
+    const { cart, cartMeta, cartIsOpen, toggle_cart, get_cart } = useContext(UserContext)
 
     return (
         <Transition.Root show={cartIsOpen} as={Fragment}>
@@ -55,10 +56,11 @@ const SideCart: React.FC = (props) => {
                                                 </div>
                                             </div>
 
-                                            {cartMeta?.loading && !cartMeta.error &&  <Loading />}
-                                            {!cartMeta?.loading && cartMeta?.error && <>
-                                                <p className='text-red-400'>{cartMeta.error}</p>
-                                            </>}
+                                            {cartMeta?.loading && !cartMeta.error && <Loading />}
+
+
+                                            {!cartMeta?.loading && cartMeta?.error && <FetchError reload={get_cart!} error={cartMeta?.error} />}
+
                                             {!cartMeta?.loading && !cartMeta?.error && cart?.items?.length === 0 &&
                                                 <div className='my-11 p-4 text-center text-xl'>
                                                     <p className='mb-8 font-bold'>Your Cart is Empty 😔</p>
@@ -73,7 +75,7 @@ const SideCart: React.FC = (props) => {
                                                 </div>
                                             }
 
-                                            {cart && !cartMeta?.loading && <div className="mt-8">
+                                            {cart && !cartMeta?.loading && !cartMeta?.error && <div className="mt-8">
 
                                                 <div className="flow-root">
                                                     <ul role="list" className="-my-6 divide-y divide-gray-200">

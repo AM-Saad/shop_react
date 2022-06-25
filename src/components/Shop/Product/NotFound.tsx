@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState, useContext } from 'react'
 import Product from '../../../models/ProductResponse'
 import UserContext from '../../../store/User/user_context'
 
-import { Link } from 'react-router-dom'
 const NotFound: React.FC = () => {
 
 
@@ -15,10 +14,10 @@ const NotFound: React.FC = () => {
         setInputVal(inputRef?.current?.value)
     }
 
-    const setSearch = (query: string) => {
-        // const data = search_products!(query)
-        // console.log(data)
-        // setSearchList(data.items)
+    const setSearch = async (query: string) => {
+
+        const items = await search_products!(query)
+        setSearchList(items!)
     }
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -53,21 +52,16 @@ const NotFound: React.FC = () => {
                         type="text"
                         name="search"
                         id="search"
-                        className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                        placeholder="Enter Project Name"
+                        className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md h-16 focus:outline-none px-2"
+                        placeholder="Search for a project"
                         ref={inputRef}
                         autoComplete="off"
                         onChange={searchHandler}
                     />
-                    <button
-                        type="submit"
-                        className="ml-4 flex-shrink-0 px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                    >
-                        Search
-                    </button>
+
                 </form>
             </div>
-            <div className="mt-10">
+            <div>
                 <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
 
                 </h3>

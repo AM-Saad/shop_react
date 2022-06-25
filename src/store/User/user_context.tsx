@@ -3,6 +3,7 @@ import { useHistory } from "react-router-dom"
 import { UserContextInterface, AuthMeta } from '../../models/UserContextInterface'
 import Meta from '../../models/Meta'
 import { Cart } from '../../models/Cart'
+import ProductResponse from '../../models/ProductResponse'
 import Pagination from '../../models/Pagination'
 
 const initialPagination = {
@@ -28,19 +29,22 @@ const UserContext = React.createContext<UserContextInterface>({
     onLogout: () => { },
     getMe: (token: string) => { },
     cartMeta: { loading: false, error: null },
-    get_cart: (cartId?: string | null) => { },
+    get_cart: () => { },
     add_to_cart: (payload: any) => { },
     toggle_cart: (state: boolean) => { },
     update_cart_item: (productId: string, quantity: number) => { },
     delete_cart_item: (productId: string) => { },
     cartIsOpen: false,
-    search_products: (query: string) => { },
+    search_products: (query: string) => null,
+    searchMeta: { loading: false, error: null },
+
 })
 
 export const UserCotextProvider: React.FC<{ children?: React.ReactNode; }> = (props) => {
     const [isLoggedIn, setIsLoggedIn] = useState(true)
     const [authMeta, setAuthMeta] = useState<AuthMeta>({ user: null, token: null, loading: false, error: null })
     const [cartMeta, setCartMeta] = useState<Meta>({ loading: false, error: null })
+    const [searchMeta, setSearchMeta] = useState<Meta>({ loading: false, error: null })
     const [pagination, setPagination] = useState<Pagination>(initialPagination)
     const [cartIsOpen, setCartIsOpen] = useState<boolean>(false)
     const [cart, setCart] = useState<Cart | null>(null)
@@ -125,8 +129,9 @@ export const UserCotextProvider: React.FC<{ children?: React.ReactNode; }> = (pr
 
         }
     }
-    const get_cart = async (cardId?: string | null) => {
+    const get_cart = async () => {
         setCartMeta((prevState) => { return { ...prevState, loading: true, error: null } })
+        const cardId = localStorage.getItem('cid')
 
         try {
             const response = await fetch(`http://localhost:8000/cart?cart=${cardId}`, {
@@ -228,25 +233,28 @@ export const UserCotextProvider: React.FC<{ children?: React.ReactNode; }> = (pr
         }
     }
 
-    const search_products = async (query: string) => {
+    const search_products = async (query: string): Promise<ProductResponse[]> => {
+        setSearchMeta((prevState) => { return { ...prevState, loading: true, error: null } })
 
         try {
             const response = await fetch(`http://localhost:8000/search?q=${query}`, {
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
-
                 }
             })
             const json = await response.json()
             if (response.status === 200) {
-                return setCart(json.items)
+                setSearchMeta((prevState) => { return { ...prevState, user: json.user, loading: false, error: null } })
+                const items: ProductResponse[] = json.items
+                return items
             }
-            return { error: 'Something went wrong.' }
-
+             setSearchMeta((prevState) => { return { ...prevState, loading: false, error: 'Something went wrong...' } })
+            return []
 
         } catch (error) {
-            return { error: 'Something went wrong.' }
+            setSearchMeta((prevState) => { return { ...prevState, loading: false, error: 'Something went wrong.' } })
+            return []
 
         }
     }
@@ -280,6 +288,7 @@ export const UserCotextProvider: React.FC<{ children?: React.ReactNode; }> = (pr
         delete_cart_item,
         cartIsOpen,
         search_products,
+        searchMeta,
         isLoggedIn: isLoggedIn,
         authMeta,
         pagination,
@@ -298,7 +307,7 @@ export const UserCotextProvider: React.FC<{ children?: React.ReactNode; }> = (pr
         } else {
             setIsLoggedIn(false)
         }
-        get_cart(cid)
+        get_cart()
 
     }, [])
 
