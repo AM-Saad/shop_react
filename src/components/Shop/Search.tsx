@@ -49,7 +49,7 @@ const Search: React.FC = () => {
         <>
             {width < 800 && <SearchIcon className="h-6 w-6 cursor-pointer text-gray-400" aria-hidden="true" onClick={() => setToggleSearchMobile(!toggleSearchMobil)} />}
 
-            <div className={`${width < 800 && 'absolute top-16 left-0 w-full transform duration-500'} ${width < 800 && !toggleSearchMobil ? '-translate-y-80 opacity-0' : 'opacity-100'} flex-1 flex items-center justify-center sm:px-2 lg:ml-6 lg:justify-end z-30`}>
+            <div className={`${width < 800 && 'absolute top-16 left-0 w-full transform duration-500'} ${width < 800 && !toggleSearchMobil ? '-translate-y-80 opacity-0' : 'opacity-100'} flex-1 flex items-center justify-center sm:px-2 lg:ml-6 lg:justify-end z-10`}>
                 <div className="max-w-lg w-full">
                     <label htmlFor="search" className="sr-only">
                         Search
