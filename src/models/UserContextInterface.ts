@@ -13,11 +13,10 @@ export type User = {
     _id: string
 }
 
-export type AuthMeta = {
+export interface AuthMeta extends Meta {
     user: User | null;
     token: string | null;
-    loading: boolean;
-    error: string | null
+
 }
 
 export interface UserContextInterface {
@@ -32,15 +31,16 @@ export interface UserContextInterface {
     onLogin: (email: string, password: string) => void,
     onLogout: () => void,
     getMe: (token: string) => void,
-    get_cart?: (cartId?: string | null) => void
+    get_cart?: () => void
     cartMeta?: Meta,
     add_to_cart?: (payload: any) => void
     update_cart_item?: (productId: string, quantity: number) => void
     toggle_cart?: (state: boolean) => void
     delete_cart_item?: (productId: string) => void
     cartIsOpen?: boolean
-    search_products?: (query: string) => void
-    search_list?: Product[]
+    search_products?: (query: string) => Promise<Product[]> | null
+    searchMeta?: Meta,
+
 }
 
 export default UserContextInterface

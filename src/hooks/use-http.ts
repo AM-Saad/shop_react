@@ -1,7 +1,11 @@
 import { useState, useCallback } from "react"
 import HookResponse from '../models/HookResponse'
 
-interface Config {
+/**
+ * Hook for handling https requests
+ */
+
+type Config = {
   url: string;
   method?: string;
   headers?: {}
@@ -14,6 +18,7 @@ const useHttp = () => {
 
   const sendRequest = async <T>(reqConfig: Config, dataLoaded: (data: HookResponse<T>) => void) => {
     setIsLoading(true)
+    setError(null)
     try {
       const response = await fetch(reqConfig.url, {
         method: reqConfig.method ? reqConfig.method : 'GET',

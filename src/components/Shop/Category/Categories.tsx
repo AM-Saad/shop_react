@@ -12,6 +12,7 @@ const Categories: React.FC = () => {
     const { url } = useContext(UserContext)
     const update_category = (data: HookResponse<Category[]>) => {
         setCategories(data.items)
+        console.log(data.items)
     }
     const fetchCategory = () => {
         fetch_category({ url: `${url}/categories` }, update_category)
