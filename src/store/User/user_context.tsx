@@ -5,6 +5,7 @@ import Meta from '../../models/Meta'
 import { Cart } from '../../models/Cart'
 import ProductResponse from '../../models/ProductResponse'
 import Pagination from '../../models/Pagination'
+import Checkout from '../../models/Checkout'
 
 const initialPagination = {
     itemsPerPage: 1,
@@ -34,9 +35,15 @@ const UserContext = React.createContext<UserContextInterface>({
     toggle_cart: (state: boolean) => { },
     update_cart_item: (productId: string, quantity: number) => { },
     delete_cart_item: (productId: string) => { },
-    cartIsOpen: false,
+    checkout: (payload: Checkout) => { },
+    checkoutMeta: { loading: false, error: null },
     search_products: (query: string) => null,
     searchMeta: { loading: false, error: null },
+    zonesMeta: { loading: true, error: null },
+    fetch_zones: () => {},
+    zones: []
+
+
 
 })
 
@@ -48,6 +55,10 @@ export const UserCotextProvider: React.FC<{ children?: React.ReactNode; }> = (pr
     const [pagination, setPagination] = useState<Pagination>(initialPagination)
     const [cartIsOpen, setCartIsOpen] = useState<boolean>(false)
     const [cart, setCart] = useState<Cart | null>(null)
+    const [checkoutMeta, setCheckoutMeta] = useState<Meta>({ loading: false, error: null })
+    const [zonesMeta, setZonesMeta] = useState<Meta>({ loading: false, error: null })
+    const [zones, setZones] = useState([])
+
     let history = useHistory()
 
 
@@ -233,6 +244,35 @@ export const UserCotextProvider: React.FC<{ children?: React.ReactNode; }> = (pr
         }
     }
 
+    const checkout = async (payload: Checkout) => {
+        setCheckoutMeta((prevState) => { return { ...prevState, loading: true, error: null } })
+        const cid = localStorage.getItem('cid')
+
+        try {
+            const response = await fetch(`http://localhost:8000/orders?cart=${cid}`, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+
+                },
+                body: JSON.stringify(payload)
+            })
+            const json = await response.json()
+            if (response.status === 200) {
+
+                return history.push(`/order/${json.order.serialNo}`)
+
+            }
+            return setCheckoutMeta((prevState) => { return { ...prevState, loading: false, error: json.message } })
+
+        } catch (error) {
+            console.log(error)
+            return setCheckoutMeta((prevState) => { return { ...prevState, loading: false, error: 'Something went wrong.' } })
+
+        }
+    }
+
     const search_products = async (query: string): Promise<ProductResponse[]> => {
         setSearchMeta((prevState) => { return { ...prevState, loading: true, error: null } })
 
@@ -249,7 +289,7 @@ export const UserCotextProvider: React.FC<{ children?: React.ReactNode; }> = (pr
                 const items: ProductResponse[] = json.items
                 return items
             }
-             setSearchMeta((prevState) => { return { ...prevState, loading: false, error: 'Something went wrong...' } })
+            setSearchMeta((prevState) => { return { ...prevState, loading: false, error: 'Something went wrong...' } })
             return []
 
         } catch (error) {
@@ -259,6 +299,31 @@ export const UserCotextProvider: React.FC<{ children?: React.ReactNode; }> = (pr
         }
     }
 
+    const fetch_zones = async () => {
+        setZonesMeta({ loading: true, error: null })
+
+        try {
+            const response = await fetch(`http://localhost:8000/zones`, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+
+                }
+            })
+            const json = await response.json()
+            setZonesMeta({ loading: false, error: null })
+            if (response.status === 200) {
+                return setZones(json.items)
+            }
+            return setZonesMeta({ loading: false, error: json.message })
+
+
+        } catch (error) {
+            return setZonesMeta({ loading: false, error: 'Something went wrong' })
+
+
+        }
+    }
     const update_pagination = async (data: Pagination) => {
         return setPagination(data)
 
@@ -291,8 +356,13 @@ export const UserCotextProvider: React.FC<{ children?: React.ReactNode; }> = (pr
         searchMeta,
         isLoggedIn: isLoggedIn,
         authMeta,
+        checkoutMeta,
         pagination,
         update_pagination,
+        checkout,
+        zones,
+        fetch_zones,
+        zonesMeta,
         url: 'http://localhost:8000'
     }
 

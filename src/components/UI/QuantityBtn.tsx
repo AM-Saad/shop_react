@@ -23,7 +23,7 @@ const QuantityBtn: React.FC<{ quantity: number, onChange: (quantity: number) => 
         <>
             <div className='bg-gray-100 flex items-center p-2 rounded w-2/4'>
                 <span className="rounded bg-gray-200 cursor-pointer hover:bg-gray-100 mx-2 p-1" onClick={decreaseVal}>-</span>
-                <input className="quantity-input bg-gray-100 p-1 w-10/12 text-center" type="number" step="1" onChange={(e) => onChange(parseInt(e.target.value))} value={quantity} />
+                <input className="quantity-input bg-gray-100 p-1 w-10/12 text-center focus:outline-none" type="number" step="1" onChange={(e) => onChange(parseInt(e.target.value))} value={quantity} />
                 <span className="rounded bg-gray-200 cursor-pointer hover:bg-gray-100 mx-2 p-1" onClick={increaseVal}>+</span>
 
             </div>

@@ -1,6 +1,7 @@
 import Product from './Product';
 import ProductResponse from './ProductResponse';
 import Category from './Category';
+import Zone from './Zone';
 import Meta from './Meta';
 import AuthContext from './UserContextInterface';
 
@@ -26,6 +27,15 @@ export interface AdminContextInterface extends AuthContext {
     fetch_category: (id: string, token: string| null) => void,
     delete_category: (id: string, token: string | null) => void,
     update_partial_category: (json_patch: any, token: string | null) => void,
+
+
+    zones: Zone[],
+    zonesMeta: Meta,
+    currentZone: Zone | null,
+    fetch_zones: (token?: string) => void,
+    fetch_zone: (id: string, token: string | null) => void,
+    delete_zone: (id: string, token: string | null) => void,
+    update_partial_zone: (json_patch: any, token: string | null) => void,
     
 }
 

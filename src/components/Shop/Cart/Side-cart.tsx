@@ -5,13 +5,14 @@ import UserContext from '../../../store/User/user_context'
 import CartItem from './CartProductItem'
 import Loading from './Loading'
 import FetchError from '../../Common/FetchError'
+import { Link } from 'react-router-dom'
 
 const SideCart: React.FC = () => {
     const { cart, cartMeta, cartIsOpen, toggle_cart, get_cart } = useContext(UserContext)
 
     return (
         <Transition.Root show={cartIsOpen} as={Fragment}>
-            <Dialog as="div" className="relative z-10" onClose={() => toggle_cart?.(false)}>
+            <Dialog as="div" className="relative z-30" onClose={() => toggle_cart?.(false)}>
                 <Transition.Child
                     as={Fragment}
                     enter="ease-in-out duration-500"
@@ -93,12 +94,12 @@ const SideCart: React.FC = () => {
                                             </div>
                                             <p className="mt-0.5 text-sm text-gray-500">Shipping and taxes calculated at checkout.</p>
                                             <div className="mt-6">
-                                                <a
-                                                    href="#"
+                                                <Link
+                                                    to='/checkout'
                                                     className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
                                                 >
                                                     Checkout
-                                                </a>
+                                                </Link>
                                             </div>
                                             <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
                                                 <p>
