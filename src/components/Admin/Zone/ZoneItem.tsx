@@ -1,10 +1,10 @@
-import{ useContext } from 'react'
+import { useContext } from 'react'
 import AdminCtx from '../../../store/Admin/admin-context';
 import { Link } from 'react-router-dom'
+import Zone from '../../../models/Zone';
 
-const ZoneItem = (props) => {
+const ZoneItem: React.FC<{ zone: Zone }> = ({ zone }) => {
     const adminCtx = useContext(AdminCtx)
-    const { zone } = props
     return (
         <>
             <li key={zone._id}>
@@ -16,9 +16,9 @@ const ZoneItem = (props) => {
                             <div className="min-w-0 flex-1 px-4 md:grid md:grid-cols-2 md:gap-4">
                                 <div>
                                     <p className="text-sm text-left font-medium text-indigo-600 truncate">{zone.name}</p>
-                                    {/* <p className="mt-2 flex items-center text-sm text-gray-500">
-                                        <span className="truncate">{product.description}</span>
-                                    </p> */}
+                                    <p className="mt-2 flex items-center text-sm text-gray-500">
+                                        <span className="truncate">{zone.zoneId}</span>
+                                    </p>
                                 </div>
                                 <div className="hidden md:block">
                                     <div>

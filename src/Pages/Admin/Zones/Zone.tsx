@@ -14,7 +14,7 @@ const Zone = () => {
         if (token) {
             fetch_zone(id, token)
         }
-        return 
+        return
     }, [token, id])
 
 
@@ -29,25 +29,11 @@ const Zone = () => {
     return (
         <div className='p-4 sm:p-6' >
             <div className='flex items-center justify-between ' >
-                <h1 className='text-2xl font-bold mb-4 text-left my-5' > Your Zone.</h1>
-                {currentZone && <button onClick={() => { adminCtx.delete_zone(currentZone._id, token) }} className=' py-2 px-4 text-sm bg-red-400 rounded hover:opacity-70 text-white' > Delete </button>}
+                <h1 className='text-2xl font-bold mb-4 text-left my-5' >Your Zones</h1>
+                {currentZone && !updatingMeta.loading && <button onClick={() => { adminCtx.delete_zone(currentZone._id, token) }} className=' py-2 px-4 text-sm bg-red-400 rounded hover:opacity-70 text-white' > Delete </button>}
                 {updatingMeta.loading && <button className=' py-2 px-4 text-sm bg-red-400 rounded hover:opacity-70 text-white opacity-50' > Delete </button>}
             </div>
-            {currentZone && <div className='grid sm:grid-cols-2 py-6 gap-8' >
-                <div>
-                    <EditableInput label='Name' inputType="text" onSave={(value: string | number) => adminCtx.update_partial_zone([{ name: value }], token)} defaultVal={currentZone.name} loading={updatingMeta.loading} />
-                </div>
-                < div >
-                    <EditableInput label='Shipping Price' inputType="text" onSave={(value: string | number) => adminCtx.update_partial_zone([{ name: value }], token)} defaultVal={currentZone.shipping} loading={updatingMeta.loading} />
-                </div>
-                < div >
-                    <EditableInput label='Zone Number' inputType="number" onSave={(value: string | number) => adminCtx.update_partial_zone([{ zoneId: value }], token)} defaultVal={currentZone.zoneId} loading={updatingMeta.loading} />
-                </div>
-                < div > 
-                    <EditableInput label='Notes' inputType="text" onSave={(value: string | number) => adminCtx.update_partial_zone([{ notes: value }], token)} defaultVal={currentZone.notes} loading={updatingMeta.loading} />
-                </div>
-
-            </div>}
+            {currentZone && <SingleZone zone={currentZone} />}
         </div>
     )
 
