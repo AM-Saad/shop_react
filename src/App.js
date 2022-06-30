@@ -4,6 +4,7 @@ import { Route, Switch } from 'react-router-dom'
 import Login from './Pages/Shop/Login.tsx'
 import Shop from './Pages/Shop/Shop'
 import Category from './Pages/Shop/Category'
+import Checkout from './Pages/Shop/Checkout'
 import AdminLogin from './Pages/Admin/Login'
 import Products from './Pages/Admin/Product/Products'
 import Product from './Pages/Admin/Product/Product'
@@ -12,6 +13,9 @@ import ProductDetail from './Pages/Shop/ProductDetail'
 import AddCategory from './Pages/Admin/Category/AddCategory'
 import Categories from './Pages/Admin/Category/Categories'
 import AdminCategory from './Pages/Admin/Category/Category'
+import CreateZone from './Pages/Admin/Zones/CreateZone'
+import Zones from './Pages/Admin/Zones/Zones'
+import Zone from './Pages/Admin/Zones/Zone.tsx'
 
 import NotFound from './Pages/NotFound'
 import Nav from './components/Layout/Nav'
@@ -22,7 +26,6 @@ import PrivateRoute from './components/Common/PrivateRoute'
 import { UserCotextProvider } from './store/User/user_context';
 
 function App() {
-
 
   return (
     <div className="App  m-auto min-h-screen">
@@ -38,6 +41,11 @@ function App() {
                   <PrivateRoute path="/admin/category/new">  <AddCategory /> </PrivateRoute>
                   <PrivateRoute path="/admin/category/:id">  <AdminCategory /> </PrivateRoute>
                   <PrivateRoute path="/admin/category">  <Categories /> </PrivateRoute>
+
+                  <PrivateRoute path="/admin/zones/new">  <CreateZone /> </PrivateRoute>
+                  <PrivateRoute path="/admin/zones/:id">  <Zone /> </PrivateRoute>
+                  <PrivateRoute path="/admin/zones">  <Zones /> </PrivateRoute>
+
                   <Route path="/admin/login">  <AdminLogin /> </Route>
                 </Switch>
               </AdminNav>
@@ -50,6 +58,7 @@ function App() {
             <Nav>
               <Switch>
                 <Route path='/category/:name' component={Category} />
+                <Route path='/checkout/' component={Checkout} />
                 <Route path='/products/:slug' component={ProductDetail} />
                 <Route path='/' component={Shop} />
                 <Route path='/shop' component={Shop} />

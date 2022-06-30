@@ -17,6 +17,7 @@ const sidebarNavigation = [
     { name: 'Home', href: '#', icon: HomeIcon, current: false },
     { name: 'Products', href: '/admin/products', icon: ViewGridIcon, current: false },
     { name: 'Category', href: '/admin/category', icon: PhotographIcon, current: false },
+    { name: 'Zones', href: '/admin/zones', icon: PhotographIcon, current: false },
     { name: 'Customers', href: '/admin/customers', icon: UserGroupIcon, current: false },
     { name: 'Settings', href: '#', icon: CogIcon, current: false },
 ]

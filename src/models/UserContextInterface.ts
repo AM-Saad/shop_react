@@ -2,6 +2,8 @@ import { Cart } from './Cart'
 import Meta from './Meta'
 import Product from './ProductResponse'
 import Pagination from './Pagination'
+import Checkout from './Checkout'
+import Zone from './Zone';
 
 export type User = {
     cart: string;
@@ -40,6 +42,12 @@ export interface UserContextInterface {
     cartIsOpen?: boolean
     search_products?: (query: string) => Promise<Product[]> | null
     searchMeta?: Meta,
+    checkout?: (payload: Checkout) => void
+    checkoutMeta?: Meta
+    zonesMeta: Meta,
+    zones: Zone[],
+    fetch_zones: () => void,
+
 
 }
 

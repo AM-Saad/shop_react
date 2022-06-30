@@ -94,7 +94,7 @@ const ProductDetail = () => {
     }
 
     return (
-        <div className="bg-white py-16">
+        <div className="bg-white">
             <div className="pt-6">
 
 

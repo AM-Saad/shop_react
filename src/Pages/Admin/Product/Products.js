@@ -37,7 +37,7 @@ const Products = () => {
 
             <div className="bg-white shadow overflow-hidden sm:rounded-md">
                 <ul  className="divide-y divide-gray-200">
-                    {products.length > 0 && products.map(product => <ProductItem product={product} />)}
+                    {products.length > 0 && products.map(product => <ProductItem  key={product._id} product={product} />)}
 
                 </ul>
             </div>

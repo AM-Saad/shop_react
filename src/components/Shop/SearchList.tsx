@@ -36,7 +36,12 @@ const SearchList: React.FC<{ products: ProductResponse[] }> = ({ products }) => 
                 </ul>}
                 {searchMeta?.loading && !searchMeta?.error && <p>Loading..</p>}
                 {!searchMeta?.loading && searchMeta?.error && <p>{searchMeta.error}</p>}
-                {!searchMeta?.loading && !searchMeta?.error && products.length === 0 && <p>Nothing Found!</p>}
+                {!searchMeta?.loading && !searchMeta?.error && products.length === 0 && 
+                <div>
+                    <h2 className="font-semibold text-slate-900">No results found</h2>
+                    <p className="mt-2 text-sm leading-6 text-slate-600">We can’t find anything with that term at the moment, try searching something else.</p>
+                </div>
+                }
             </div>
             <div className="mt-6">
                 <a

@@ -7,6 +7,7 @@ import AdminContextInterface from '../../models/AdminContextInterface';
 import ProductResponse from '../../models/ProductResponse';
 import Pagination from '../../models/Pagination';
 import Category from '../../models/Category';
+import Zone from '../../models/Zone';
 import Meta from '../../models/Meta';
 import { AuthMeta } from '../../models/UserContextInterface'
 const initialPagination = {
@@ -23,20 +24,20 @@ const initialPagination = {
 const AdminContext = React.createContext<AdminContextInterface>({
     pagination: initialPagination,
     products: [],
-    productsMeta: { loading: false, error: null },
+    productsMeta: { loading: true, error: null },
     currentProduct: null,
     fetch_products: (token: string | null) => { },
     fetch_product: (id: string, token: string | null) => { },
     delete_product: (id: string, token: string | null) => { },
     update_partial_product: (json_patch: any, token: string | null) => { },
     categories: [],
-    categoryMeta: { loading: false, error: null },
+    categoryMeta: { loading: true, error: null },
     currentCategory: null,
     fetch_categories: (token: string | null) => { },
     fetch_category: (id: string, token: string | null) => { },
     delete_category: (id: string, token: string | null) => { },
     update_partial_category: (json_patch: any, token: string | null) => { },
-    updatingMeta: { loading: false, error: null },
+    updatingMeta: { loading: true, error: null },
     upload_image: (id: string, files: any, token: string | null, tag: string) => { },
     delete_image: (id: string, image: string, token: string | null, tag: string) => { },
     url: 'http://localhost:8000',
@@ -45,6 +46,14 @@ const AdminContext = React.createContext<AdminContextInterface>({
     onLogin: (email: string, password: string) => { },
     onLogout: () => { },
     getMe: (token: string) => { },
+
+    zones: [],
+    zonesMeta: { loading: true, error: null },
+    currentZone: null,
+    fetch_zones: (token?: string) => { },
+    fetch_zone: (id: string, token: string | null) => { },
+    delete_zone: (id: string, token: string | null) => { },
+    update_partial_zone: (json_patch: any, token: string | null) => { },
 
 })
 
@@ -63,6 +72,11 @@ export const AdminContextProvider: React.FC<{ children?: React.ReactNode; }> = (
     const [categoryMeta, setCategoryMeta] = useState<Meta>({ loading: false, error: null })
     const [updatingMeta, setUpdatingMeta] = useState<Meta>({ loading: false, error: null })
     const [categories, setCategories] = useState([])
+
+    const [currentZone, setCurrentZone] = useState<Zone | null>(null)
+    const [zonesMeta, setZonesMeta] = useState<Meta>({ loading: false, error: null })
+    const [zones, setZones] = useState([])
+
     const notificationCtx = useContext(NotificationModalContext)
     const authCtx = useContext(AuthContext)
 
@@ -373,6 +387,119 @@ export const AdminContextProvider: React.FC<{ children?: React.ReactNode; }> = (
 
         }
     }
+    const fetch_zones = async (token?: string) => {
+        setZonesMeta({ loading: true, error: null })
+
+        try {
+            const response = await fetch(`http://localhost:8000/admin/api/zones`, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: "Bearer " + token,
+
+                }
+            })
+            const json = await response.json()
+            setZonesMeta({ loading: false, error: null })
+            if (response.status === 200) {
+                return setZones(json.items)
+            }
+            return setZonesMeta({ loading: false, error: json.message })
+
+
+        } catch (error) {
+            return setZonesMeta({ loading: false, error: 'Something went wrong' })
+
+
+        }
+    }
+    const fetch_zone = async (id: string, token: string | null) => {
+        setZonesMeta({ loading: true, error: null })
+        try {
+            const response = await fetch(`http://localhost:8000/admin/api/zones/${id}`, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: "Bearer " + token,
+
+                }
+            })
+            const json = await response.json()
+            setZonesMeta({ loading: false, error: null })
+            if (response.status === 200) {
+                return setCurrentZone(json.item)
+            }
+            return setZonesMeta({ loading: false, error: json.message })
+
+
+        } catch (error) {
+            return setZonesMeta({ loading: false, error: 'Something went wrong' })
+
+
+        }
+    }
+
+    const delete_zone = async (id: string, token: string | null) => {
+        setZonesMeta({ loading: true, error: null })
+
+        try {
+            const response = await fetch(`http://localhost:8000/admin/api/zones/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    Authorization: "Bearer " + token,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+            const json = await response.json()
+            setZonesMeta({ loading: false, error: null })
+            if (response.status === 200) {
+                notificationCtx.showModal({ title: 'Success', message: json.message })
+                return history.push('/admin/zones')
+
+            }
+            notificationCtx.showModal({ title: 'Error', message: json.message })
+
+            return setZonesMeta({ loading: false, error: null })
+
+
+        } catch (error) {
+            notificationCtx.showModal({ title: 'Error', message: 'Something went wrong' })
+            return setZonesMeta({ loading: false, error: null })
+
+
+        }
+    }
+
+    const update_partial_zone = async (json_patch: any, token: string | null) => {
+        setUpdatingMeta({ loading: true, error: null })
+
+        try {
+            const response = await fetch(`http://localhost:8000/admin/api/zones/${currentZone?._id}`, {
+                method: 'PATCH',
+                body: JSON.stringify({ values: json_patch }),
+                headers: {
+                    Authorization: "Bearer " + token,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+            const json = await response.json()
+            setUpdatingMeta({ loading: false, error: null })
+            if (response.status === 200) {
+                console.log(json.item)
+                return setCurrentZone(json.item)
+            }
+            notificationCtx.showModal({ title: 'Error', message: json.message })
+
+            return setUpdatingMeta({ loading: false, error: null })
+
+
+        } catch (error) {
+            notificationCtx.showModal({ title: 'Error', message: 'Something went wrong' })
+            return setUpdatingMeta({ loading: false, error: null })
+        }
+    }
 
     const login = async (email: string, password: string) => {
         setAuthMeta((prevState) => { return { ...prevState, loading: true, error: null } })
@@ -463,6 +590,13 @@ export const AdminContextProvider: React.FC<{ children?: React.ReactNode; }> = (
         fetch_category,
         delete_category,
         update_partial_category,
+        zones,
+        currentZone,
+        zonesMeta,
+        fetch_zones,
+        fetch_zone,
+        delete_zone,
+        update_partial_zone,
         upload_image,
         delete_image,
         updatingMeta,
