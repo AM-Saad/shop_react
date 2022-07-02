@@ -15,6 +15,7 @@ import { SearchIcon } from '@heroicons/react/solid'
 
 const sidebarNavigation = [
     { name: 'Home', href: '#', icon: HomeIcon, current: false },
+    { name: 'Orders', href: '/admin/orders', icon: ViewGridIcon, current: false },
     { name: 'Products', href: '/admin/products', icon: ViewGridIcon, current: false },
     { name: 'Category', href: '/admin/category', icon: PhotographIcon, current: false },
     { name: 'Zones', href: '/admin/zones', icon: PhotographIcon, current: false },

@@ -47,7 +47,7 @@ const UserContext = React.createContext<UserContextInterface>({
 
 })
 
-export const UserCotextProvider: React.FC<{ children?: React.ReactNode; }> = (props) => {
+export const UserContextProvider: React.FC<{ children?: React.ReactNode; }> = (props) => {
     const [isLoggedIn, setIsLoggedIn] = useState(true)
     const [authMeta, setAuthMeta] = useState<AuthMeta>({ user: null, token: null, loading: false, error: null })
     const [cartMeta, setCartMeta] = useState<Meta>({ loading: false, error: null })
