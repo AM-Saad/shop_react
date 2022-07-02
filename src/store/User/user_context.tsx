@@ -40,7 +40,7 @@ const UserContext = React.createContext<UserContextInterface>({
     search_products: (query: string) => null,
     searchMeta: { loading: false, error: null },
     zonesMeta: { loading: true, error: null },
-    fetch_zones: () => {},
+    fetch_zones: () => { },
     zones: []
 
 
@@ -181,8 +181,7 @@ export const UserCotextProvider: React.FC<{ children?: React.ReactNode; }> = (pr
             const json = await response.json()
             if (response.status === 200) {
                 setCartMeta((prevState) => { return { ...prevState, user: json.user, loading: false, error: null } })
-                setCart(json.cart)
-                return setCartIsOpen(true)
+                return setCart(json.cart)
             }
             return setCartMeta((prevState) => { return { ...prevState, loading: false, error: 'Something went wrong, we cannot find your cart...' } })
 
@@ -249,7 +248,7 @@ export const UserCotextProvider: React.FC<{ children?: React.ReactNode; }> = (pr
         const cid = localStorage.getItem('cid')
 
         try {
-            const response = await fetch(`http://localhost:8000/orders?cart=${cid}`, {
+            const response = await fetch(`http://localhost:8000/checkout?cart=${cid}`, {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
@@ -259,7 +258,9 @@ export const UserCotextProvider: React.FC<{ children?: React.ReactNode; }> = (pr
                 body: JSON.stringify(payload)
             })
             const json = await response.json()
+
             if (response.status === 200) {
+                setCart((prevState) => { return { ...prevState!, items: [] } })
 
                 return history.push(`/order/${json.order.serialNo}`)
 

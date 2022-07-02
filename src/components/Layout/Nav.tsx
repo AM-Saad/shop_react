@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import UserContext from '../../store/User/user_context'
 import { NavLink, Link } from 'react-router-dom'
 import { Fragment } from 'react'
@@ -15,9 +15,13 @@ type Props = {
 };
 
 const Nav: React.FC<Props> = (props) => {
-    const { toggle_cart } = useContext(UserContext)
-    const [openCart, setOpenCart] = useState<boolean>(false)
-
+    const { toggle_cart, cart } = useContext(UserContext)
+    const [cartChanged, setCartChanged] = useState<boolean>(false)
+    useEffect(() => {
+        setCartChanged(true)
+       const timer =  setTimeout(() => setCartChanged(false), 500);
+       return () => clearTimeout(timer)
+    }, [cart?.items])
 
     const Links = [
 
@@ -88,10 +92,13 @@ const Nav: React.FC<Props> = (props) => {
                                             )}
                                         </Disclosure.Button>
                                     </div>
-                                    <div className='text-gray-400 hover:text-gray-500 cursor-pointer' onClick={() => toggle_cart?.(true)}>
+                                    <div className='text-gray-400 hover:text-gray-500 cursor-pointer flex gap-1' onClick={() => toggle_cart?.(true)}>
                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                                         </svg>
+                                        {cart && cart.items.length > 0 && <span className={`bg-red-400 flex h-5 items-center justify-center p-1 rounded-full text-white w-5 transform transition-transform ${cartChanged ? 'scale-125' : 'scale-100'}`}>
+                                            {cart?.items.length}
+                                        </span>}
                                     </div>
                                     <SideCart />
                                     <div className="hidden lg:ml-4 lg:flex lg:items-center">

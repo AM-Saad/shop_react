@@ -39,7 +39,7 @@ const EditableInput: React.FC<{ label: string, inputType: string; defaultVal: st
           <EditIcon isEdit={isEditing} startEdit={() => setIsEditing(true)} />
         </div>
 
-        <p className={`${isEditing ? 'hidden' : 'block'} mr-5  font-medium text-lg`}>{defaultVal || '.n.c'}</p>
+        <p className={`${isEditing ? 'hidden' : 'block'} mr-5  font-medium text-lg`}>{defaultVal || 'n.c.'}</p>
         <div className={`${isEditing ? 'block' : 'hidden'}`}>
           <input disabled={props.loading} className={`border-1-b bg-lightgray  w-full  p-large b-r-medium mb-2 m-t-large font-medium p-2`}
             onChange={(e) => setDefault(e.target.value)}
