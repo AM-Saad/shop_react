@@ -17,7 +17,7 @@ const ZoneItem: React.FC<{ zone: Zone }> = ({ zone }) => {
                                 <div>
                                     <p className="text-sm text-left font-medium text-indigo-600 truncate">{zone.name}</p>
                                     <p className="mt-2 flex items-center text-sm text-gray-500">
-                                        <span className="truncate">{zone.zoneId}</span>
+                                        <span className="truncate">#{zone.zoneId}</span>
                                     </p>
                                 </div>
                                 <div className="hidden md:block">

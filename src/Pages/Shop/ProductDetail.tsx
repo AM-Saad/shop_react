@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState, useCallback, useReducer } from 'react'
 import { useParams } from 'react-router-dom'
 import Product from '../../models/ProductResponse'
-import  { SelectedAttribute } from '../../models/Attribute'
+import { SelectedAttribute } from '../../models/Attribute'
 import useHttp from '../../hooks/use-http'
 import { StarIcon } from '@heroicons/react/solid'
 import UserContext from '../../store/User/user_context'
@@ -12,6 +12,7 @@ import HookResponse from '../../models/HookResponse'
 import ProductResponse from '../../models/ProductResponse'
 import FetchError from '../../components/Common/FetchError'
 
+import AddToCartBtn from '../../components/UI/AddToCartBtn'
 const reviews = { href: '#', average: 4, totalCount: 117 }
 
 
@@ -137,13 +138,13 @@ const ProductDetail = () => {
 
                             <ProductAttributes loading={isLoading} productAttributes={product?.attributes || []} selectedAttributes={cartState?.attributes || []} productPrice={product?.info.price || 0} onChange={changeAttr} />
 
-                            {!isLoading && <button
-                                onClick={addToCart}
-                                type="submit"
-                                className="mt-10 w-full bg-indigo-600 border border-transparent rounded-md py-3 px-8 flex items-center justify-center text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                            >
-                                Add to bag
-                            </button>}
+                            {!isLoading &&
+                                <AddToCartBtn
+                                    className="h-14 flex relative hover:bg-indigo-500 hover:shadow-md mt-10 w-full bg-indigo-600 border border-transparent rounded-md py-3 px-8 flex items-center justify-center text-base font-medium text-white  focus:outline-none"
+                                    type="button"
+                                    onClicked={(e) => addToCart(e)}
+                                />
+                            }
                             {isLoading && <button
                                 type="button"
                                 className="opacity-50 mt-10 w-full bg-indigo-600 border border-transparent rounded-md py-3 px-8 flex items-center justify-center text-base font-medium text-white  focus:outline-none"
