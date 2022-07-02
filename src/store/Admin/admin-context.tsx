@@ -63,7 +63,7 @@ const AdminContext = React.createContext<AdminContextInterface>({
     fetch_orders: (token?: string) => { },
     fetch_order: (id: string, token: string | null) => { },
     delete_order: (id: string, token: string | null) => { },
-    update_partial_order: (json_patch: any, token: string | null) => { },
+    change_order_status: (status: number, token: string | null) => { },
 
 })
 
@@ -598,13 +598,13 @@ export const AdminContextProvider: React.FC<{ children?: React.ReactNode; }> = (
         }
     }
 
-    const update_partial_order = async (json_patch: any, token: string | null) => {
+    const change_order_status = async (status: number, token: string | null) => {
         setUpdatingMeta({ loading: true, error: null })
 
         try {
-            const response = await fetch(`http://localhost:8000/admin/api/orders/${currentZone?._id}`, {
-                method: 'PATCH',
-                body: JSON.stringify({ values: json_patch }),
+            const response = await fetch(`http://localhost:8000/admin/api/orders/${currentOrder?._id}/status`, {
+                method: 'PUT',
+                body: JSON.stringify({ status: status }),
                 headers: {
                     Authorization: "Bearer " + token,
                     'Accept': 'application/json',
@@ -730,7 +730,7 @@ export const AdminContextProvider: React.FC<{ children?: React.ReactNode; }> = (
         fetch_orders,
         fetch_order,
         delete_order,
-        update_partial_order,
+        change_order_status,
 
         upload_image,
         delete_image,

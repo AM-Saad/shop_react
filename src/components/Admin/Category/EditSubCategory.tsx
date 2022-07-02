@@ -42,7 +42,7 @@ const EditSubCategory: React.FC<{ defaultVal: string[], loading: boolean; onSave
             </div>
 
             <p className={`${inputState.isEdit ? 'hidden' : 'flex'} mr-5 gap-2 font-medium text-lg`}>
-                {subCategories.length > 0 && subCategories.map((subCategory => <Badge label={subCategory} />))}
+                {subCategories.length > 0 && subCategories.map((subCategory => <Badge label={subCategory} className="bg-purple-300"/>))}
             </p>
             <div className={`${inputState.isEdit ? 'block' : 'hidden'}`}>
                 <input value={subCategoryInput} id="name" className='block border-1 border-b-2 border-gray my-2 outline-white py-2 w-full' onChange={(e) => setSubCategoryInput(e.target.value)} onKeyDown={handleKeyDown} type="text" name="subCategory" placeholder='Write then press enter to add (e.g T-Shirts)' />

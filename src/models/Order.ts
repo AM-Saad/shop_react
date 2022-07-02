@@ -2,8 +2,9 @@ import { SelectedAttribute } from './Attribute'
 
 
 export enum OrderStatus {
-    Panding = 1,
-    Confirmed = 2,
+    Panding = 0,
+    Confirmed = 1,
+    Shipped = 2,
     Delivered = 3,
     Canceled = 4,
 }
@@ -11,18 +12,19 @@ export enum OrderStatus {
 export const ORDER_STATUS_LABELS = new Map<OrderStatus, string>([
     [OrderStatus.Panding, "Panding"],
     [OrderStatus.Confirmed, "Confirmed"],
+    [OrderStatus.Shipped, "Shipped"],
     [OrderStatus.Delivered, "Delivered"],
     [OrderStatus.Canceled, "Canceled"],
 ]);
 
 export const getOrderStatusColor = (
-    bundleStatus: OrderStatus | undefined
+    bundleStatus: OrderStatus
 ) => {
-    if (bundleStatus === undefined) return "gray";
-
     if (bundleStatus === OrderStatus.Panding) {
         return "gray";
     } else if (bundleStatus === OrderStatus.Confirmed) {
+        return "purple";
+    } else if (bundleStatus === OrderStatus.Shipped) {
         return "yellow";
     } else if (bundleStatus === OrderStatus.Delivered) {
         return "green";
@@ -57,10 +59,11 @@ export interface OrderInfo {
     shipping_details: {
         apartment: string
         area: { name: string, zoneId: number }
+        floor: string
+        price: number
+        street: string
     }
-    floor: string
-    price: number
-    street: string
+
 }
 
 export interface OrderItem {
@@ -72,4 +75,6 @@ export interface OrderItem {
     quantity: number
     total: number
     _id: string
+    image: string
+
 }

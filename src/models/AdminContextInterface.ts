@@ -45,7 +45,7 @@ export interface AdminContextInterface extends AuthContext {
     fetch_orders: (token?: string) => void,
     fetch_order: (id: string, token: string | null) => void,
     delete_order: (id: string, token: string | null) => void,
-    update_partial_order: (json_patch: any, token: string | null) => void,
+    change_order_status: (status: number, token: string | null) => void,
     
 }
 
