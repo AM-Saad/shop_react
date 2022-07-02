@@ -16,6 +16,8 @@ import AdminCategory from './Pages/Admin/Category/Category'
 import CreateZone from './Pages/Admin/Zones/CreateZone'
 import Zones from './Pages/Admin/Zones/Zones'
 import Zone from './Pages/Admin/Zones/Zone.tsx'
+import Orders from './Pages/Admin/Orders/Orders'
+import Order from './Pages/Admin/Orders/Order.tsx'
 
 import NotFound from './Pages/NotFound'
 import Nav from './components/Layout/Nav'
@@ -23,7 +25,7 @@ import AdminNav from './components/Layout/AdminNav'
 import NotificationModalProvider from './store/Notification/notification-context';
 import { AdminContextProvider } from './store/Admin/admin-context';
 import PrivateRoute from './components/Common/PrivateRoute'
-import { UserCotextProvider } from './store/User/user_context';
+import { UserContextProvider } from './store/User/user_context';
 
 function App() {
 
@@ -45,6 +47,8 @@ function App() {
                   <PrivateRoute path="/admin/zones/new">  <CreateZone /> </PrivateRoute>
                   <PrivateRoute path="/admin/zones/:id">  <Zone /> </PrivateRoute>
                   <PrivateRoute path="/admin/zones">  <Zones /> </PrivateRoute>
+                  <PrivateRoute path="/admin/orders/:id">  <Order /> </PrivateRoute>
+                  <PrivateRoute path="/admin/orders">  <Orders /> </PrivateRoute>
 
                   <Route path="/admin/login">  <AdminLogin /> </Route>
                 </Switch>
@@ -54,7 +58,7 @@ function App() {
         </Route>
 
         <Route  >
-          <UserCotextProvider>
+          <UserContextProvider>
             <Nav>
               <Switch>
                 <Route path='/category/:name' component={Category} />
@@ -65,7 +69,7 @@ function App() {
                 <Route path='/login' component={Login} />
               </Switch>
             </Nav>
-          </UserCotextProvider>
+          </UserContextProvider>
 
         </Route>
         <Route path="*">

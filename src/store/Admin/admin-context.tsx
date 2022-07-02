@@ -8,6 +8,7 @@ import ProductResponse from '../../models/ProductResponse';
 import Pagination from '../../models/Pagination';
 import Category from '../../models/Category';
 import Zone from '../../models/Zone';
+import Order from '../../models/Order';
 import Meta from '../../models/Meta';
 import { AuthMeta } from '../../models/UserContextInterface'
 const initialPagination = {
@@ -55,6 +56,15 @@ const AdminContext = React.createContext<AdminContextInterface>({
     delete_zone: (id: string, token: string | null) => { },
     update_partial_zone: (json_patch: any, token: string | null) => { },
 
+
+    orders: [],
+    ordersMeta: { loading: true, error: null },
+    currentOrder: null,
+    fetch_orders: (token?: string) => { },
+    fetch_order: (id: string, token: string | null) => { },
+    delete_order: (id: string, token: string | null) => { },
+    change_order_status: (status: number, token: string | null) => { },
+
 })
 
 export const AdminContextProvider: React.FC<{ children?: React.ReactNode; }> = (props) => {
@@ -76,6 +86,10 @@ export const AdminContextProvider: React.FC<{ children?: React.ReactNode; }> = (
     const [currentZone, setCurrentZone] = useState<Zone | null>(null)
     const [zonesMeta, setZonesMeta] = useState<Meta>({ loading: false, error: null })
     const [zones, setZones] = useState([])
+
+    const [currentOrder, setCurrentOrder] = useState<Order | null>(null)
+    const [ordersMeta, setOrdersMeta] = useState<Meta>({ loading: false, error: null })
+    const [orders, setOrders] = useState([])
 
     const notificationCtx = useContext(NotificationModalContext)
     const authCtx = useContext(AuthContext)
@@ -500,6 +514,119 @@ export const AdminContextProvider: React.FC<{ children?: React.ReactNode; }> = (
             return setUpdatingMeta({ loading: false, error: null })
         }
     }
+    const fetch_orders = async (token?: string) => {
+        setOrdersMeta({ loading: true, error: null })
+        console.log('hee')
+        try {
+            const response = await fetch(`http://localhost:8000/admin/api/orders`, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: "Bearer " + token,
+
+                }
+            })
+            const json = await response.json()
+            setOrdersMeta({ loading: false, error: null })
+            if (response.status === 200) {
+                return setOrders(json.items)
+            }
+            return setOrdersMeta({ loading: false, error: json.message })
+
+
+        } catch (error) {
+            return setOrdersMeta({ loading: false, error: 'Something went wrong' })
+
+
+        }
+    }
+    const fetch_order = async (id: string, token: string | null) => {
+        setOrdersMeta({ loading: true, error: null })
+        try {
+            const response = await fetch(`http://localhost:8000/admin/api/orders/${id}`, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: "Bearer " + token,
+
+                }
+            })
+            const json = await response.json()
+            setOrdersMeta({ loading: false, error: null })
+            if (response.status === 200) {
+                return setCurrentOrder(json.item)
+            }
+            return setOrdersMeta({ loading: false, error: json.message })
+
+
+        } catch (error) {
+            return setOrdersMeta({ loading: false, error: 'Something went wrong' })
+
+
+        }
+    }
+
+    const delete_order = async (id: string, token: string | null) => {
+        setOrdersMeta({ loading: true, error: null })
+
+        try {
+            const response = await fetch(`http://localhost:8000/admin/api/orders/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    Authorization: "Bearer " + token,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+            const json = await response.json()
+            setOrdersMeta({ loading: false, error: null })
+            if (response.status === 200) {
+                notificationCtx.showModal({ title: 'Success', message: json.message })
+                return history.push('/admin/orders')
+
+            }
+            notificationCtx.showModal({ title: 'Error', message: json.message })
+
+            return setOrdersMeta({ loading: false, error: null })
+
+
+        } catch (error) {
+            notificationCtx.showModal({ title: 'Error', message: 'Something went wrong' })
+            return setOrdersMeta({ loading: false, error: null })
+
+
+        }
+    }
+
+    const change_order_status = async (status: number, token: string | null) => {
+        setUpdatingMeta({ loading: true, error: null })
+
+        try {
+            const response = await fetch(`http://localhost:8000/admin/api/orders/${currentOrder?._id}/status`, {
+                method: 'PUT',
+                body: JSON.stringify({ status: status }),
+                headers: {
+                    Authorization: "Bearer " + token,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+            const json = await response.json()
+            setUpdatingMeta({ loading: false, error: null })
+            if (response.status === 200) {
+                console.log(json.item)
+                return setCurrentOrder(json.item)
+            }
+            notificationCtx.showModal({ title: 'Error', message: json.message })
+
+            return setUpdatingMeta({ loading: false, error: null })
+
+
+        } catch (error) {
+            notificationCtx.showModal({ title: 'Error', message: 'Something went wrong' })
+            return setUpdatingMeta({ loading: false, error: null })
+        }
+    }
 
     const login = async (email: string, password: string) => {
         setAuthMeta((prevState) => { return { ...prevState, loading: true, error: null } })
@@ -597,6 +724,14 @@ export const AdminContextProvider: React.FC<{ children?: React.ReactNode; }> = (
         fetch_zone,
         delete_zone,
         update_partial_zone,
+        orders,
+        currentOrder,
+        ordersMeta,
+        fetch_orders,
+        fetch_order,
+        delete_order,
+        change_order_status,
+
         upload_image,
         delete_image,
         updatingMeta,

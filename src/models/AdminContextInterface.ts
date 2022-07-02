@@ -2,6 +2,7 @@ import Product from './Product';
 import ProductResponse from './ProductResponse';
 import Category from './Category';
 import Zone from './Zone';
+import Order from './Order';
 import Meta from './Meta';
 import AuthContext from './UserContextInterface';
 
@@ -36,6 +37,15 @@ export interface AdminContextInterface extends AuthContext {
     fetch_zone: (id: string, token: string | null) => void,
     delete_zone: (id: string, token: string | null) => void,
     update_partial_zone: (json_patch: any, token: string | null) => void,
+
+
+    orders: Order[],
+    ordersMeta: Meta,
+    currentOrder: Order | null,
+    fetch_orders: (token?: string) => void,
+    fetch_order: (id: string, token: string | null) => void,
+    delete_order: (id: string, token: string | null) => void,
+    change_order_status: (status: number, token: string | null) => void,
     
 }
 

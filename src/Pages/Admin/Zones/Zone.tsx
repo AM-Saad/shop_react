@@ -29,7 +29,7 @@ const Zone = () => {
     return (
         <div className='p-4 sm:p-6' >
             <div className='flex items-center justify-between ' >
-                <h1 className='text-2xl font-bold mb-4 text-left my-5' >Your Zones</h1>
+                <h1 className='text-2xl font-bold mb-4 text-left my-5' >Your Zone</h1>
                 {currentZone && !updatingMeta.loading && <button onClick={() => { adminCtx.delete_zone(currentZone._id, token) }} className=' py-2 px-4 text-sm bg-red-400 rounded hover:opacity-70 text-white' > Delete </button>}
                 {updatingMeta.loading && <button className=' py-2 px-4 text-sm bg-red-400 rounded hover:opacity-70 text-white opacity-50' > Delete </button>}
             </div>
