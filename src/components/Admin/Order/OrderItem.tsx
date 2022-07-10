@@ -1,7 +1,7 @@
 
 import { Link } from 'react-router-dom'
 import Order, { getOrderStatusColor, ORDER_STATUS_LABELS } from '../../../models/Order';
-import { CalendarIcon, LocationMarkerIcon, UsersIcon } from '@heroicons/react/solid'
+import { CalendarIcon, LocationMarkerIcon } from '@heroicons/react/solid'
 
 const OrderItem: React.FC<{ order: Order }> = ({ order }) => {
 

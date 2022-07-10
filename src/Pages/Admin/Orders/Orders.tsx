@@ -22,10 +22,7 @@ const Orders = () => {
         return <div className='p-3 border-2 border-red-200 my-4'><p className='text-red-400'>{ordersMeta.error}</p></div>
     }
     if (!ordersMeta.loading && !ordersMeta.error && orders.length === 0) {
-        return <>
-            <Fallback label="Orders" redirectLink="/admin/orders/new" />
-
-        </>
+        return <Fallback label="Orders" redirectLink="/admin/orders/new" />
     }
     return (
 
@@ -40,7 +37,6 @@ const Orders = () => {
             <div className="bg-white shadow overflow-hidden sm:rounded-md">
                 <ul className="divide-y divide-gray-200">
                     {orders.length > 0 && orders.map(order => <OrderItem key={order._id} order={order} />)}
-
                 </ul>
             </div>
         </div>

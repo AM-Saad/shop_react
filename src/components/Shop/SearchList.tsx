@@ -1,11 +1,9 @@
-import React, { useContext, useRef, useEffect } from 'react'
+import React, { useContext } from 'react'
 import { Link } from 'react-router-dom'
 import ProductResponse from '../../models/ProductResponse'
 import UserContext from '../../store/User/user_context'
 
-interface item {
 
-}
 const SearchList: React.FC<{ products: ProductResponse[] }> = ({ products }) => {
     const { url, searchMeta } = useContext(UserContext)
 

@@ -1,13 +1,11 @@
 /* This example requires Tailwind CSS v2.0+ */
-import React,{ Fragment,  useEffect, useContext } from 'react'
-import { useSelector } from 'react-redux';
+import React, { Fragment, useContext } from 'react'
 import { Transition } from '@headlessui/react'
-import { CheckCircleIcon } from '@heroicons/react/outline'
+import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/outline'
 import { XIcon } from '@heroicons/react/solid'
-import {NotificationModalContext} from '../../store/Notification/notification-context'
+import { NotificationModalContext } from '../../store/Notification/notification-context'
 export default function Notification(props) {
- const ctx =  useContext(NotificationModalContext)
-console.log(props)
+  const ctx = useContext(NotificationModalContext)
   return (
     <>
       {/* Global notification live region, render this permanently at the end of the document */}
@@ -31,7 +29,8 @@ console.log(props)
               <div className="p-4">
                 <div className="flex items-start">
                   <div className="flex-shrink-0">
-                    <CheckCircleIcon className={`h-6 w-6 ${props.message.title ==='Error'? 'text-red-400' : 'text-green-400'}`} aria-hidden="true" />
+                    {props.message.title != 'Error' && <CheckCircleIcon className={`h-6 w-6 text-green-400`} aria-hidden="true" />}
+                    {props.message.title === 'Error' && <XCircleIcon className={`h-6 w-6 text-red-400`} aria-hidden="true" />}
                   </div>
                   <div className="ml-3 w-0 flex-1 pt-0.5">
                     <p className="text-sm font-medium text-gray-900">{props.message.message}</p>
@@ -41,7 +40,7 @@ console.log(props)
                       className="bg-white rounded-md inline-flex text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                       onClick={() => {
                         ctx.dismissModal()
-                        
+
                       }}
                     >
                       <span className="sr-only">Close</span>

@@ -30,7 +30,7 @@ import { UserContextProvider } from './store/User/user_context';
 function App() {
 
   return (
-    <div className="App  m-auto min-h-screen">
+    <div className="App  m-auto">
       <Switch>
         <Route path="/admin/:path?">
           <NotificationModalProvider>

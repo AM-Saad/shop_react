@@ -31,9 +31,7 @@ export default function MainProducts() {
 
       <div className=" grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
         {isLoading && <Loading />}
-        {!isLoading && !error && <div>
-          {products.map((product) => <ProductItem product={product} />)}
-        </div>}
+        {!isLoading && !error && products.map((product) => <ProductItem product={product} />)}
       </div>
     </div>
   )

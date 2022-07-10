@@ -9,7 +9,7 @@ import SelectBox from './SelectBox'
 import { useStateMachine } from "little-state-machine";
 
 import { updateForm } from "./stateMachineActions"
-import { MyCheckbox } from './MyCheckbox';
+import { Checkbox } from './Checkbox';
 import CheckoutError from './CheckoutError';
 
 import UserContext from '../../../store/User/user_context'
@@ -65,7 +65,7 @@ const FormObserver: React.FC = () => {
 
 const MyForm: React.FC<{ confirmCheckout: (form: CheckoutInterface) => void }> = ({ confirmCheckout }) => {
     const { state } = useStateMachine({ updateForm });
-    const { cartMeta, checkout, checkoutMeta, zones } = useContext(UserContext)
+    const { cartMeta, checkoutMeta, zones } = useContext(UserContext)
 
 
     return (
@@ -151,12 +151,16 @@ const MyForm: React.FC<{ confirmCheckout: (form: CheckoutInterface) => void }> =
                             />
                         </div>
 
-                        <MyCheckbox name="acceptedTerms">
+                        <Checkbox name="acceptedTerms">
                             I accept the terms and conditions
-                        </MyCheckbox>
+                        </Checkbox>
+
                         <p className="mt-0.5 text-sm text-gray-500">Shipping and taxes calculated at checkout.</p>
+
                         <PlaceOrderButton cartMeta={cartMeta} checkoutMeta={checkoutMeta} />
+
                         {checkoutMeta?.error && <CheckoutError error={checkoutMeta?.error} />}
+
                         <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
                             <p>
                                 or{' '}
@@ -168,6 +172,7 @@ const MyForm: React.FC<{ confirmCheckout: (form: CheckoutInterface) => void }> =
                                 </Link>
                             </p>
                         </div>
+
                     </form>
                 )
             }

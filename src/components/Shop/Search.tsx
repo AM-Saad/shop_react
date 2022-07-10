@@ -15,7 +15,7 @@ const Search: React.FC = () => {
 
     const [inputVal, setInputVal] = useState<string>('')
     const [searchList, setSearchList] = useState<Product[]>([])
-    const { url, search_products } = useContext(UserContext)
+    const { search_products } = useContext(UserContext)
     const width: number = useWindowsResize()
     const dropdownRef = useRef(null);
 

@@ -39,7 +39,7 @@ const AttributeLine: React.FC<{ attribute: Attribute, updateAttributes: (attribu
     useEffect(() => {
         setFormIsValid(optionName.length > 0 && optionPrice.length > 0 && optionQty.length > 0)
         setOptions(props.attribute.options)
-    }, [formIsValid, optionName, optionPrice, optionQty])
+    }, [formIsValid, optionName, optionPrice, optionQty, props.attribute])
     return (
         <div key={props.attribute._id}>
             <div className="p-4 my-3 text-left border">

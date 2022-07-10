@@ -1,6 +1,5 @@
 
 
-
 import { useField } from "formik";
 
 interface Props {
@@ -11,24 +10,25 @@ interface Props {
   data?: string;
   className?: string;
   type?: string;
+  children: React.ReactNode
 }
 
-const Input: React.FC<Props> = ({ label, ...props }) => {
+const SelectBox: React.FC<Props> = ({ label, ...props }) => {
   // useField() returns [formik.getFieldProps(), formik.getFieldMeta()]
   // which we can spread on <input> and alse replace ErrorMessage entirely.
   const [field, meta] = useField(props);
   return (
-    <div className="grid w-full">
+    <>
       <div className="flex items-center gap-3">
         <label htmlFor={props.id || props.name}>{label}</label>
-
         {meta.touched && meta.error ? (
           <div className="error text-red-400 text-sm">{meta.error}</div>
         ) : null}
       </div>
-      <input id={props.id || props.name} {...field}  {...props} />
-    </div>
+      <select {...field} {...props} />
+
+    </>
   );
 };
 
-export default Input
+export default SelectBox
