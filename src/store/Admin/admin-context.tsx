@@ -217,6 +217,7 @@ export const AdminContextProvider: React.FC<{ children?: React.ReactNode; }> = (
         try {
             const newForm = new FormData()
             for (const img of files) {
+                console.log(img)
                 newForm.append('image', img)
             }
             // files.forEach(img => ))
@@ -231,7 +232,9 @@ export const AdminContextProvider: React.FC<{ children?: React.ReactNode; }> = (
             setUpdatingMeta({ loading: false, error: null })
             if (response.status === 200) {
                 if (tag === 'Product') {
-                    return setCurrentProduct(json.item)
+                    return setCurrentProduct((prevState) => {
+                        return { ...prevState!, images: json.item.images }
+                    })
                 } else {
                     return setCurrentCategory(json.item)
                 }
@@ -264,7 +267,10 @@ export const AdminContextProvider: React.FC<{ children?: React.ReactNode; }> = (
             setUpdatingMeta({ loading: false, error: null })
             if (response.status === 200) {
                 if (tag === 'Product') {
-                    return setCurrentProduct(json.item)
+                    console.log(json.item)
+                    return setCurrentProduct((prevState) => {
+                        return { ...prevState!, images: json.item.images }
+                    })
                 } else {
                     return setCurrentCategory(json.item)
                 }

@@ -35,11 +35,9 @@ const Categories = () => {
             <div className=' mb-5  flex items-center justify-between'>
                 <h2 className="font-boldtext-2xl text-left">Category</h2>
                 <Link to={`/admin/category/new`} className=' py-2 px-4 text-sm bg-green-400 rounded hover:opacity-70 text-white'>New Category</Link>
-
             </div>
-
             <div className="bg-white shadow overflow-hidden sm:rounded-md">
-                <ul  className="divide-y divide-gray-200">
+                <ul className="divide-y divide-gray-200">
                     {categories.length > 0 && categories.map(category => <CategoryItem category={category} />)}
 
                 </ul>

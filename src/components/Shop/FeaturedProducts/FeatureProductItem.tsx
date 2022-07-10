@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import Product from '../../../models/ProductResponse'
 
 
-
 const FeatureProductItem: React.FC<{ product: Product, url: string }> = ({ product, url }) => {
     return (
         <Link key={product._id} to={'/products/' + product.slug} className="group h-5/6">

@@ -1,32 +1,31 @@
-import{ useContext } from 'react'
-import AdminCtx from '../../../store/Admin/admin-context';
+import { useContext } from 'react'
+import AdminContext from '../../../store/Admin/admin-context';
 import { Link } from 'react-router-dom'
+import { CheckCircleIcon } from '@heroicons/react/solid'
 
-const CategoryItem = (props) => {
-    const adminCtx = useContext(AdminCtx)
-    const { category } = props
+import Product from '../../../models/ProductResponse';
+const ProductItem: React.FC<{ product: Product }> = ({ product }) => {
+    const adminCtx = useContext(AdminContext)
     return (
         <>
-            <li key={category._id}>
-                <Link to={`/admin/category/${category._id}`} className="block hover:bg-gray-50">
+            <li>
+                <Link to={`/admin/products/${product.slug}`} className="block hover:bg-gray-50">
                     <div className="flex items-center px-4 py-4 sm:px-6">
                         <div className="min-w-0 flex-1 flex items-center">
                             <div className="flex-shrink-0">
-                                <img className="h-12 w-12 rounded-full" src={adminCtx.url + category.image} alt="" />
+                                <img className="h-12 w-12 rounded-full" src={adminCtx.url + product.images[0]} alt="" />
                             </div>
                             <div className="min-w-0 flex-1 px-4 md:grid md:grid-cols-2 md:gap-4">
                                 <div>
-                                    <p className="text-sm text-left font-medium text-indigo-600 truncate">{category.name}</p>
-                                    {/* <p className="mt-2 flex items-center text-sm text-gray-500">
+                                    <p className="text-sm text-left font-medium text-indigo-600 truncate">{product.name}</p>
+                                    <p className="mt-2 flex items-center text-sm text-gray-500">
                                         <span className="truncate">{product.description}</span>
-                                    </p> */}
+                                    </p>
                                 </div>
                                 <div className="hidden md:block">
                                     <div>
-                                        {/* <p className="text-sm text-gray-900">
-                                            Applied on <time dateTime={application.date}>{application.dateFull}</time>
-                                        </p> */}
-                                        {/* {product.info.quantity > 0 && <p className="mt-2 flex items-center text-sm text-gray-500">
+
+                                        {product.info.quantity > 0 && <p className="mt-2 flex items-center text-sm text-gray-500">
                                             <CheckCircleIcon className="flex-shrink-0 mr-1.5 h-5 w-5 text-green-400" aria-hidden="true" />
                                             In Stock
                                         </p>
@@ -35,13 +34,10 @@ const CategoryItem = (props) => {
                                             <CheckCircleIcon className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" aria-hidden="true" />
                                             Out of Stock
                                         </p>
-                                        } */}
+                                        }
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div>
-                            {/* <ChevronRightIcon className="h-5 w-5 text-gray-400" aria-hidden="true" /> */}
                         </div>
                     </div>
                 </Link>
@@ -50,4 +46,4 @@ const CategoryItem = (props) => {
     )
 }
 
-export default CategoryItem
+export default ProductItem

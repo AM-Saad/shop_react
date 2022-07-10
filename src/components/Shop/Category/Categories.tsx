@@ -12,7 +12,6 @@ const Categories: React.FC = () => {
     const { url } = useContext(UserContext)
     const update_category = (data: HookResponse<Category[]>) => {
         setCategories(data.items)
-        console.log(data.items)
     }
     const fetchCategory = () => {
         fetch_category({ url: `${url}/categories` }, update_category)
@@ -34,21 +33,24 @@ const Categories: React.FC = () => {
                         {isLoading && <Loading />}
                         {!isLoading && !error &&
                             categories.map((callout) => (
-                                <div key={callout.name} className="group relative">
-                                    <div className="relative w-full h-80 bg-white rounded-lg overflow-hidden group-hover:opacity-75 sm:aspect-w-2 sm:aspect-h-1 sm:h-64 lg:aspect-w-1 lg:aspect-h-1">
-                                        <img
-                                            src={url + callout.image}
-                                            alt={callout.name}
-                                            className="w-full h-full object-center object-cover"
-                                        />
-                                    </div>
-                                    <h3 className="mt-6 text-sm text-gray-500">
-                                        <Link to={'/category/' + callout.name}>
-                                            <span className="absolute inset-0" />
-                                            {callout.name}
-                                        </Link>
-                                    </h3>
-                                </div>
+                                <ul key={callout.name} className="group relative">
+                                    <li role="listitem">
+                                        <div className="relative w-full h-80 bg-white rounded-lg overflow-hidden group-hover:opacity-75 sm:aspect-w-2 sm:aspect-h-1 sm:h-64 lg:aspect-w-1 lg:aspect-h-1">
+                                            <img
+                                                src={url + callout.image}
+                                                alt={callout.name}
+                                                className="w-full h-full object-center object-cover"
+                                            />
+                                        </div>
+                                        <h3 className="mt-6 text-sm text-gray-500">
+                                            <a href={'/category/' + callout.name}>
+                                                <span className="absolute inset-0" />
+                                                {callout.name}
+                                            </a>
+                                        </h3>
+                                    </li>
+
+                                </ul>
                             ))}
                     </div>
 

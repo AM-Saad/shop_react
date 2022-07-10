@@ -1,11 +1,8 @@
-import React, { useContext, useReducer, useEffect, useState, FormEventHandler } from 'react'
+import React, { useContext, useReducer, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 
 import AdminContext from '../../../store/Admin/admin-context'
 import { NotificationModalContext } from '../../../store/Notification/notification-context'
-
-import Category from '../../../models/Category'
-
 
 enum ActionKind {
     USER_INPUT = 'USER_INPUT',
@@ -28,7 +25,6 @@ const inputReducer = (state: InputState, action: Action) => {
     }
     if (action.type === ActionKind.INPUT_BLUR) {
         return { value: state.value, isValid: state.value.length > 0 }
-
     }
     return state
 }

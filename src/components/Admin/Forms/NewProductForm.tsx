@@ -1,6 +1,6 @@
 import React, { useEffect, useReducer, useState, useContext } from 'react'
 
-import UploadImage from '../../UI/UploadImage'
+import UploadImage from '../../UI/UploadImageInput'
 import AdminItemGallery from '../../UI/AdminItemGallery'
 import ToggleBtn from '../../UI/ToggleBtn'
 import Product from '../../../models/Product'
@@ -175,7 +175,7 @@ const NewProductForm: React.FC<{ onNewProduct: (newProduct: Product) => void }> 
         <>
             <form onSubmit={submitHandler} >
                 <div>
-                    <UploadImage childFunc={childFunc} onSelectImage={imageSelectHandler} />
+                    {/* <UploadImage childFunc={childFunc} onSelectImage={imageSelectHandler} /> */}
                     <AdminItemGallery images={imageFilePreview} onDeleteImage={deleteImageHandler} />
                     {imageWarning && <p className='text-yellow-600'>{imageWarning}</p>}
 

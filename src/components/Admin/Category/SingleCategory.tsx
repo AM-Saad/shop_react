@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react'
 import AdminContext from '../../../store/Admin/admin-context'
 import AuthContext from '../../../store/User/user_context'
-import UploadImage from '../../UI/UploadImage'
+import UploadImage from '../../UI/UploadImageInput'
 import AdminItemGallery from '../../UI/AdminItemGallery'
 import Category from '../../../models/Category'
 import EditableInput from '../../UI/EditableInput'
@@ -17,10 +17,11 @@ const SingleCategory: React.FC<{ category: Category }> = (props) => {
   const { token } = adminCtx.authMeta
 
   const { updatingMeta } = adminCtx
-  
+
 
   const [imageFiles, setImageFiles] = useState<[]>([])
-  const childFunc = React.useRef<any>(null)
+  const cancelUpload = React.useRef<any>(null)
+  const cleanInputValues = React.useRef<any>(null)
 
   let images = []
   for (const item of category.image) {
@@ -32,7 +33,7 @@ const SingleCategory: React.FC<{ category: Category }> = (props) => {
   }
 
   const cancelUploadImage = () => {
-    childFunc.current()
+    cancelUpload.current()
     setImageFiles([])
   }
 
@@ -50,12 +51,21 @@ const SingleCategory: React.FC<{ category: Category }> = (props) => {
     <>
       <div className='grid sm:grid-cols-2 py-6 gap-8'>
         <div>
-          <EditableInput label='Name' inputType="text" onSave={(value: string | number) => adminCtx.update_partial_category([{ name: value }], token)} defaultVal={category.name} loading={updatingMeta.loading} />
+          <EditableInput
+            label='Name'
+            inputType="text"
+            onSave={(value: string | number) => adminCtx.update_partial_category([{ name: value }], token)}
+            defaultVal={category.name}
+            loading={updatingMeta.loading}
+            required={true}
+            validationMessage={'Name is required'}
+            classes={"border-1-b bg-lightgray w-full p-large b-r-medium m-t-large font-medium p-2"}
+          />
           <EditSubCategory defaultVal={category.subCategory} loading={updatingMeta.loading} onSave={(value: string[]) => adminCtx.update_partial_category([{ subCategory: value }], token)} />
         </div>
         <div>
           <div>
-            {!category.image && <UploadImage childFunc={childFunc} image={authCtx.url + category.image} onSelectImage={imageSelectHandler} />}
+            {!category.image && <UploadImage cancelUpload={cancelUpload} cleanInputValues={cleanInputValues} image={authCtx.url + category.image} onSelectImage={imageSelectHandler} />}
             {category.image && <AdminItemGallery images={[{ id: category.image, image: authCtx.url + category.image }]} onDeleteImage={deleteImageHandler} />}
 
             {imageFiles.length > 0 && <div className="flex justify-end gap-2">

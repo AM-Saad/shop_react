@@ -3,13 +3,11 @@ import UserContext from '../../../store/User/user_context'
 import Modal from '../../UI/Modal'
 import LoadingGallery from './LoadingGallery'
 
-
 interface Props {
     images: string[],
     productName: string,
     loading: boolean
 }
-
 
 const ProductGallery: React.FC<Props> = ({ images, productName, loading }) => {
     const [openImagesModal, setOpenImagesModal] = useState(false)

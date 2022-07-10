@@ -21,14 +21,13 @@ const AttributesContainer: React.FC<{ updateAttributes: (attributes: Attribute[]
     const updateAttributes = (attribute: Attribute) => {
         const attributeIdx = attributes.findIndex(i => i.attrNo === attribute.attrNo)
         attributes[attributeIdx] = attribute
-        // spread attributes to new array to feel the chagnes in useEffect
+
+        // spread attributes to new array to get a new reference
         const newAttributes = [...attributes]
         setAttributes(newAttributes)
     }
 
     useEffect(() => {
-        console.log(attributes)
-
         props.updateAttributes(attributes)
 
     }, [attributes])

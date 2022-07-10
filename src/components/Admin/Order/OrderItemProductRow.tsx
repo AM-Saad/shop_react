@@ -14,7 +14,7 @@ const OrderItemRow: React.FC<{ item: OrderItem }> = ({ item }) => {
                 <img
                     src={url + item?.image || ''}
                     alt={item.name}
-                    className="h-full w-full object-cover object-center"
+                    className="h-full w-full object-cover object-center bg-gray-100"
                 />
             </div>
 

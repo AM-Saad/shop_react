@@ -4,8 +4,6 @@ import { useHistory } from 'react-router-dom'
 import AdminContext from '../../../store/Admin/admin-context'
 import { NotificationModalContext } from '../../../store/Notification/notification-context'
 
-import Category from '../../../models/Category'
-
 
 enum ActionKind {
     USER_INPUT = 'USER_INPUT',

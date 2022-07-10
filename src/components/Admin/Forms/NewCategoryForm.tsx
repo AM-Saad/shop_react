@@ -1,6 +1,6 @@
 import React, { useEffect, useReducer, useState } from 'react'
 
-import UploadImage from '../../UI/UploadImage'
+import UploadImage from '../../UI/UploadImageInput'
 import BadgeWithDelete from '../../UI/BadgeWithDelete'
 import Category from '../../../models/Category'
 
@@ -109,7 +109,7 @@ const NewProductForm: React.FC<{ onNewCategory: (newCategory: Category) => void 
         <>
             <form className='shadow sm:w-8/12 m-auto rounded py-4'>
                 <div>
-                    <UploadImage childFunc={childFunc} onSelectImage={imageSelectHandler} />
+                    {/* <UploadImage childFunc={childFunc} onSelectImage={imageSelectHandler} /> */}
                     {imageWarning && <p className='text-yellow-600'>{imageWarning}</p>}
 
                 </div>

@@ -25,7 +25,6 @@ const Zones = () => {
     if (!zonesMeta.loading && !zonesMeta.error && zones.length === 0) {
         return <>
             <Fallback label="Zones" redirectLink="/admin/zones/new" />
-
         </>
     }
     return (
