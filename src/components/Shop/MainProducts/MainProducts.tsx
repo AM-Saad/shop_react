@@ -29,10 +29,10 @@ export default function MainProducts() {
       <h2 className="text-2xl font-extrabold tracking-tight text-left mb-5">Customers also Like</h2>
       {!isLoading && error && <FetchError reload={fetchProducts} error={error} />}
 
-      <div className=" grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
+      <ul role="list" className=" grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
         {isLoading && <Loading />}
-        {!isLoading && !error && products.map((product) => <ProductItem product={product} />)}
-      </div>
+        {!isLoading && !error && products.map((product) => <ProductItem  key={product._id} product={product} />)}
+      </ul>
     </div>
   )
 }

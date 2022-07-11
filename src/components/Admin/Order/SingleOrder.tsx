@@ -19,8 +19,8 @@ const SingleOrder: React.FC<{ order: Order }> = ({ order }) => {
         </div>
       </div>
       <div className='grid lg:grid-cols-2'>
-        <div className='order-2 lg:order-1'>
-          <div className='border-b mb-5 pb-2'>
+        <div className='order-2 lg:order-1 bg-gray-100 lg:order-1 mr-3 o p-5 rounded-md shadow'>
+          <div className='border-b border-gray-400 mb-5 pb-2'>
 
             <h2 className='font-bold text-xl mb-5'>Customer Info</h2>
             <p className='text-lg mb-4'>
@@ -47,7 +47,7 @@ const SingleOrder: React.FC<{ order: Order }> = ({ order }) => {
             </p>
           </div>
 
-          <div className="border-t border-gray-200 py-6 ">
+          <div className="border-t border-gray-400  py-6 ">
             <div className="border-b-2 mb-5">
               <div className="mb-6 flex justify-between text-base font-medium text-gray-900">
                 <p>Subtotal</p>
