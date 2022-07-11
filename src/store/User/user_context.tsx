@@ -307,8 +307,7 @@ export const UserContextProvider: React.FC<{ children?: React.ReactNode; }> = (p
             const response = await fetch(`http://localhost:8000/zones`, {
                 headers: {
                     'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-
+                    'Content-Type': 'application/json'
                 }
             })
             const json = await response.json()
@@ -318,11 +317,8 @@ export const UserContextProvider: React.FC<{ children?: React.ReactNode; }> = (p
             }
             return setZonesMeta({ loading: false, error: json.message })
 
-
         } catch (error) {
             return setZonesMeta({ loading: false, error: 'Something went wrong' })
-
-
         }
     }
     const update_pagination = async (data: Pagination) => {

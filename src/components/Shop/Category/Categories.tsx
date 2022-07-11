@@ -24,7 +24,7 @@ const Categories: React.FC = () => {
     return (
         <>
             <div className="max-w-7xl mx-auto">
-                <div className="max-w-2xl mx-auto py-8 lg:max-w-none">
+                <div data-testid="categorytest" className="max-w-2xl mx-auto py-8 lg:max-w-none">
                     <h2 className="text-2xl font-extrabold text-gray-900 mb-5">Collections</h2>
 
                     {!isLoading && error && <FetchError reload={fetchCategory} error={error} />}
