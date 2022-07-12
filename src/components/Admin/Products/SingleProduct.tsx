@@ -18,7 +18,7 @@ const SingleProduct: React.FC = () => {
   useEffect(() => {
 
     if (token) {
-      adminCtx.fetch_categories(token)
+      adminCtx.fetch_categories(token, 1)
     }
   }, [token, currentProduct])
 
@@ -30,7 +30,7 @@ const SingleProduct: React.FC = () => {
           <EditableInput
             label='Name'
             inputType="text"
-            onSave={(value: string | number) => adminCtx.update_partial_product([{ name: value }, { slug: value.toString().replace('', '-') }], token)}
+            onSave={(value: string | number) => adminCtx.update_partial_product([{ name: value }, { slug: value.toString().split(' ').join('_') }], token)}
             defaultVal={currentProduct!.name}
             loading={updatingMeta.loading}
             classes={"rounded shadow w-full p-large b-r-medium m-t-large font-medium p-2 outline-none"}

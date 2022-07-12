@@ -15,8 +15,6 @@ const Category = () => {
     const { url, pagination, update_pagination } = useContext(UserContext)
     const { sendRequest: fetch_category_products, isLoading, error } = useHttp()
     const [products, setProducts] = useState<ProductResponse[]>([])
-    console.log(pagination)
-
     const { currentPage } = pagination
     const update_category = (data: HookResponse<ProductResponse[]>) => {
         setProducts(data.items)
@@ -30,7 +28,6 @@ const Category = () => {
     }
 
     const updatePagination = (page: number) => {
-        console.log(pagination)
         update_pagination!({ ...pagination, currentPage: page })
     }
     useEffect(() => {
@@ -47,7 +44,7 @@ const Category = () => {
                 {isLoading && <Loading />}
                 {!isLoading && !error && products.length > 0 && <> {products.map((product) => <ProductItem product={product} />)} </>}
             </div>
-            {!isLoading && !error && pagination && <Pagination pagination={pagination} update={updatePagination} />}
+            {!error && pagination && <Pagination pagination={pagination} update={updatePagination} />}
         </div>
     )
 }

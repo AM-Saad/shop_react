@@ -52,7 +52,7 @@ const AddProduct: React.FC = () => {
     }
     useEffect(() => {
         if (token) {
-            fetch_categories(token)
+            fetch_categories(token, 1)
         }
     }, [token])
     return (

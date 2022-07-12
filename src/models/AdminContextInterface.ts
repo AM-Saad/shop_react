@@ -18,13 +18,13 @@ export interface AdminContextInterface extends AuthContext {
     currentCategory:Category | null;
     categoryMeta:Meta;
     updatingMeta:Meta;
-    fetch_products: (token: string | null) => void,
+    fetch_products: (token: string | null, page:number) => void,
     fetch_product: (id: string, token: string| null) => void,
     delete_product: (id: string, token: string | null) => void,
     update_partial_product: (json_patch: any, token: string | null) => void,
     upload_image: (id: string, files: any, token: string | null, tag:string) => void,
     delete_image: (id: string, image: string, token: string | null, tag:string) => void,
-    fetch_categories: (token: string | null) => void,
+    fetch_categories:(token: string, page: number) => void,
     fetch_category: (id: string, token: string| null) => void,
     delete_category: (id: string, token: string | null) => void,
     update_partial_category: (json_patch: any, token: string | null) => void,
@@ -33,7 +33,7 @@ export interface AdminContextInterface extends AuthContext {
     zones: Zone[],
     zonesMeta: Meta,
     currentZone: Zone | null,
-    fetch_zones: (token?: string) => void,
+    fetch_zones: (token?: string, page?: number) => void,
     fetch_zone: (id: string, token: string | null) => void,
     delete_zone: (id: string, token: string | null) => void,
     update_partial_zone: (json_patch: any, token: string | null) => void,
@@ -42,7 +42,7 @@ export interface AdminContextInterface extends AuthContext {
     orders: Order[],
     ordersMeta: Meta,
     currentOrder: Order | null,
-    fetch_orders: (token?: string) => void,
+    fetch_orders: (token: string, page:number) => void,
     fetch_order: (id: string, token: string | null) => void,
     delete_order: (id: string, token: string | null) => void,
     change_order_status: (status: number, token: string | null) => void,
