@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { NotificationModalContext } from "../Notification/notification-context"
 import AuthContext from "../User/user_context"
-import { useHistory } from "react-router-dom"
+import { useHistory, useLocation } from "react-router-dom"
 
 import AdminContextInterface from '../../models/AdminContextInterface';
 import ProductResponse from '../../models/ProductResponse';
@@ -12,7 +12,7 @@ import Order from '../../models/Order';
 import Meta from '../../models/Meta';
 import { AuthMeta } from '../../models/UserContextInterface'
 const initialPagination = {
-    itemsPerPage: 1,
+    itemsPerPage: 5,
     currentPage: 1,
     hasNextPage: false,
     hasPrevPage: false,
@@ -27,14 +27,14 @@ const AdminContext = React.createContext<AdminContextInterface>({
     products: [],
     productsMeta: { loading: true, error: null },
     currentProduct: null,
-    fetch_products: (token: string | null) => { },
+    fetch_products: (token: string | null, page:number) => { },
     fetch_product: (id: string, token: string | null) => { },
     delete_product: (id: string, token: string | null) => { },
     update_partial_product: (json_patch: any, token: string | null) => { },
     categories: [],
     categoryMeta: { loading: true, error: null },
     currentCategory: null,
-    fetch_categories: (token: string | null) => { },
+    fetch_categories:(token: string, page?:number) => { },
     fetch_category: (id: string, token: string | null) => { },
     delete_category: (id: string, token: string | null) => { },
     update_partial_category: (json_patch: any, token: string | null) => { },
@@ -51,7 +51,7 @@ const AdminContext = React.createContext<AdminContextInterface>({
     zones: [],
     zonesMeta: { loading: true, error: null },
     currentZone: null,
-    fetch_zones: (token?: string) => { },
+    fetch_zones: (token?: string, page?:number) => { },
     fetch_zone: (id: string, token: string | null) => { },
     delete_zone: (id: string, token: string | null) => { },
     update_partial_zone: (json_patch: any, token: string | null) => { },
@@ -64,14 +64,16 @@ const AdminContext = React.createContext<AdminContextInterface>({
     fetch_order: (id: string, token: string | null) => { },
     delete_order: (id: string, token: string | null) => { },
     change_order_status: (status: number, token: string | null) => { },
+    update_pagination: (data: Pagination) => { },
 
 })
 
 export const AdminContextProvider: React.FC<{ children?: React.ReactNode; }> = (props) => {
+    let history = useHistory()
+    const location = useLocation();
 
     const [isLoggedIn, setIsLoggedIn] = useState(true)
     const [authMeta, setAuthMeta] = useState<AuthMeta>({ user: null, token: null, loading: false, error: null })
-    let history = useHistory()
 
     const [productsMeta, setProductsMeta] = useState<Meta>({ loading: false, error: null })
     const [products, setProducts] = useState([])
@@ -95,11 +97,12 @@ export const AdminContextProvider: React.FC<{ children?: React.ReactNode; }> = (
     const authCtx = useContext(AuthContext)
 
 
-    const fetch_products = async (token: string | null) => {
+
+    const fetch_products = async (token: string | null, page:number = 1) => {
         setProductsMeta({ loading: true, error: null })
 
         try {
-            const response = await fetch(`http://localhost:8000/admin/api/items`, {
+            const response = await fetch(`http://localhost:8000/admin/api/items?page=${page}&&itemsPerPage=${pagination?.itemsPerPage}`, {
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
@@ -110,6 +113,9 @@ export const AdminContextProvider: React.FC<{ children?: React.ReactNode; }> = (
             const json = await response.json()
             setProductsMeta({ loading: false, error: null })
             if (response.status === 200) {
+                if (json.pagination) {
+                    update_pagination!(json.pagination)
+                }
                 return setProducts(json.items)
             }
             return setProductsMeta({ loading: false, error: json.message })
@@ -291,11 +297,11 @@ export const AdminContextProvider: React.FC<{ children?: React.ReactNode; }> = (
 
 
 
-    const fetch_categories = async (token: string | null) => {
+    const fetch_categories = async (token: string, page:number = 1) => {
         setCategoryMeta({ loading: true, error: null })
 
         try {
-            const response = await fetch(`http://localhost:8000/admin/api/category`, {
+            const response = await fetch(`http://localhost:8000/admin/api/category?page=${page}&&itemsPerPage=${pagination?.itemsPerPage}`, {
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
@@ -306,6 +312,9 @@ export const AdminContextProvider: React.FC<{ children?: React.ReactNode; }> = (
             const json = await response.json()
             setCategoryMeta({ loading: false, error: null })
             if (response.status === 200) {
+                if (json.pagination) {
+                    setPagination(json.pagination)
+                }
                 return setCategories(json.items)
             }
             return setCategoryMeta({ loading: false, error: json.message })
@@ -331,7 +340,6 @@ export const AdminContextProvider: React.FC<{ children?: React.ReactNode; }> = (
             const json = await response.json()
             setCategoryMeta({ loading: false, error: null })
             if (response.status === 200) {
-                console.log(json.item)
                 return setCurrentCategory(json.item)
             }
             return setCategoryMeta({ loading: false, error: json.message })
@@ -392,7 +400,6 @@ export const AdminContextProvider: React.FC<{ children?: React.ReactNode; }> = (
             const json = await response.json()
             setUpdatingMeta({ loading: false, error: null })
             if (response.status === 200) {
-                console.log(json.item)
                 return setCurrentCategory(json.item)
             }
             notificationCtx.showModal({ title: 'Error', message: json.message })
@@ -403,15 +410,15 @@ export const AdminContextProvider: React.FC<{ children?: React.ReactNode; }> = (
         } catch (error) {
             notificationCtx.showModal({ title: 'Error', message: 'Something went wrong' })
             return setUpdatingMeta({ loading: false, error: null })
-
-
         }
     }
-    const fetch_zones = async (token?: string) => {
+    const fetch_zones = async (token?: string, page:number = 1) => {
+
+
         setZonesMeta({ loading: true, error: null })
 
         try {
-            const response = await fetch(`http://localhost:8000/admin/api/zones`, {
+            const response = await fetch(`http://localhost:8000/admin/api/zones?page=${page}&&itemsPerPage=${pagination?.itemsPerPage}`, {
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
@@ -422,6 +429,9 @@ export const AdminContextProvider: React.FC<{ children?: React.ReactNode; }> = (
             const json = await response.json()
             setZonesMeta({ loading: false, error: null })
             if (response.status === 200) {
+                if (json.pagination) {
+                    update_pagination!(json.pagination)
+                }
                 return setZones(json.items)
             }
             return setZonesMeta({ loading: false, error: json.message })
@@ -520,11 +530,11 @@ export const AdminContextProvider: React.FC<{ children?: React.ReactNode; }> = (
             return setUpdatingMeta({ loading: false, error: null })
         }
     }
-    const fetch_orders = async (token?: string) => {
+    const fetch_orders = async (token: string,  page:number = 1) => {
         setOrdersMeta({ loading: true, error: null })
         console.log('hee')
         try {
-            const response = await fetch(`http://localhost:8000/admin/api/orders`, {
+            const response = await fetch(`http://localhost:8000/admin/api/orders?page=${page}&&itemsPerPage=${pagination?.itemsPerPage}`, {
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
@@ -535,6 +545,9 @@ export const AdminContextProvider: React.FC<{ children?: React.ReactNode; }> = (
             const json = await response.json()
             setOrdersMeta({ loading: false, error: null })
             if (response.status === 200) {
+                if (json.pagination) {
+                    update_pagination!(json.pagination)
+                }
                 return setOrders(json.items)
             }
             return setOrdersMeta({ loading: false, error: json.message })
@@ -690,6 +703,10 @@ export const AdminContextProvider: React.FC<{ children?: React.ReactNode; }> = (
 
         }
     }
+
+    const update_pagination = async (data: Pagination) => {
+        return setPagination(data)
+    }
     const logout = () => {
         setIsLoggedIn(false)
         localStorage.removeItem('uid')
@@ -705,8 +722,8 @@ export const AdminContextProvider: React.FC<{ children?: React.ReactNode; }> = (
             getMe(uid)
         } else {
             setIsLoggedIn(false)
-
         }
+        update_pagination(initialPagination)
     }, [])
     const adminContext = {
         fetch_products,
@@ -747,6 +764,7 @@ export const AdminContextProvider: React.FC<{ children?: React.ReactNode; }> = (
         isLoggedIn: isLoggedIn,
         authMeta,
         pagination,
+        update_pagination,
         url: 'http://localhost:8000'
     }
 

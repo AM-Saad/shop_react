@@ -323,8 +323,6 @@ export const UserContextProvider: React.FC<{ children?: React.ReactNode; }> = (p
     }
     const update_pagination = async (data: Pagination) => {
         return setPagination(data)
-
-
     }
     const logout = () => {
         setIsLoggedIn(false)

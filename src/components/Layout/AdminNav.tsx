@@ -31,6 +31,7 @@ const userNavigation = [
 const newItemNavigation = [
     { name: 'New Product', href: '/admin/products/new' },
     { name: 'New Category', href: '/admin/category/new' },
+    { name: 'New Zone', href: '/admin/zones/new' },
 ]
 
 function classNames(...classes: string[]): string {
