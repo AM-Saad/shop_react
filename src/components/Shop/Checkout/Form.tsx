@@ -4,7 +4,7 @@ import * as Yup from "yup";
 import { Link } from 'react-router-dom'
 import CheckoutInterface from '../../../models/Checkout'
 
-import Input from './Input'
+import Input from '../../UI/Input'
 import SelectBox from './SelectBox'
 import { useStateMachine } from "little-state-machine";
 
@@ -30,7 +30,7 @@ const validationScheme = Yup.object({
         .max(20, "Must be 20 characters or less")
         .required("Required"),
     street: Yup.string()
-        .max(20, "Must be 20 characters or less")
+        .max(200, "Must be 20 characters or less")
         .required("Required"),
     apartment: Yup.string()
         .max(20, "Must be 20 characters or less")
@@ -123,7 +123,7 @@ const MyForm: React.FC<{ confirmCheckout: (form: CheckoutInterface) => void }> =
                             <option value="" label="Select a zone">
                                 Select a zone{" "}
                             </option>
-                            {zones.map(zone => <option value={zone.zoneId} key={zone.zoneId}>{zone.name}</option>)}
+                            {zones!.map(zone => <option value={zone.zoneId} key={zone.zoneId}>{zone.name}</option>)}
                         </SelectBox>
                         <Input
                             label="Street"

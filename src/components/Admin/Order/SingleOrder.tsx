@@ -19,7 +19,7 @@ const SingleOrder: React.FC<{ order: Order }> = ({ order }) => {
         </div>
       </div>
       <div className='grid lg:grid-cols-2'>
-        <div className='order-2 lg:order-1 bg-gray-100 lg:order-1 mr-3 o p-5 rounded-md shadow'>
+        <div className='order-2 lg:order-1 bg-gray-50 lg:order-1 mr-3 o p-5 rounded-md shadow'>
           <div className='border-b border-gray-400 mb-5 pb-2'>
 
             <h2 className='font-bold text-xl mb-5'>Customer Info</h2>
@@ -70,7 +70,7 @@ const SingleOrder: React.FC<{ order: Order }> = ({ order }) => {
           </div>
         </div>
 
-        <div className='order-1 lg:order-2'>
+        <div className='auto-rows-max gap-5 grid lg:order-2 order-1 sm:mb-0 mb-4'>
 
           {order.items.map(item => <OrderItemProductRow item={item} />)}
 

@@ -3,6 +3,7 @@ import React, { useEffect, useReducer, useState } from 'react'
 import UploadImage from '../../UI/UploadImageInput'
 import BadgeWithDelete from '../../UI/BadgeWithDelete'
 import Category from '../../../models/Category'
+import ToggleBtn from '../../UI/ToggleBtn'
 
 enum ActionKind {
     USER_INPUT = 'USER_INPUT',
@@ -36,6 +37,8 @@ const NewProductForm: React.FC<{ onNewCategory: (newCategory: Category) => void 
     const [nameState, dispatchNameState] = useReducer(nameReducer, { value: '', isValid: false })
     const [subCategories, setSubCategories] = useState<string[]>([])
     const [subCategoryInput, setSubCategoryInput] = useState<string>('')
+    const [featured, setFeatured] = useState<boolean>(true);
+    const [active, setActive] = useState<boolean>(true);
     const [imageFile, setImageFile] = useState<any[]>([])
     const [imageWarning, setImageWarning] = useState<string | null>(null)
     const [formIsValid, setFormIsValid] = useState(false);
@@ -94,7 +97,9 @@ const NewProductForm: React.FC<{ onNewCategory: (newCategory: Category) => void 
             name: nameState.value,
             image: imageFile[0] ? imageFile[0].image : '',
             attributes: [],
-            subCategory: subCategories
+            subCategory: subCategories,
+            active:active,
+            featured:featured
         }
         props.onNewCategory(newitem);
     };
@@ -107,11 +112,22 @@ const NewProductForm: React.FC<{ onNewCategory: (newCategory: Category) => void 
     }, [nameValid, imageFile])
     return (
         <>
-            <form className='shadow sm:w-8/12 m-auto rounded py-4'>
+            <form>
                 <div>
                     {/* <UploadImage childFunc={childFunc} onSelectImage={imageSelectHandler} /> */}
                     {imageWarning && <p className='text-yellow-600'>{imageWarning}</p>}
 
+                </div>
+                <div className="flex items-center justify-between p-4 mb-3 text-left border-1 border-b-2 border-gray">
+
+                    <div className=''>
+                        <label htmlFor="desc" className='block mb-2'>Featured</label>
+                        <ToggleBtn value={featured} onSetValue={setFeatured}></ToggleBtn>
+                    </div>
+                    <div className=''>
+                        <label htmlFor="desc" className='block mb-2'>Active</label>
+                        <ToggleBtn value={active} onSetValue={setActive}></ToggleBtn>
+                    </div>
                 </div>
                 <div className='p-4 mb-3 text-left'>
                     <label htmlFor="name" >Name</label>
@@ -125,7 +141,7 @@ const NewProductForm: React.FC<{ onNewCategory: (newCategory: Category) => void 
                 </div>
 
 
-                {formIsValid && <button  onClick={submitHandler} type="button" className='w-36 p-3 bg-green-400 rounded hover:opacity-50'>Add</button>}
+                {formIsValid && <button onClick={submitHandler} type="button" className='w-36 p-3 bg-green-400 rounded hover:opacity-50'>Add</button>}
                 {!formIsValid && <button type="button" className='w-36 p-3 bg-green-400 rounded opacity-50 '>Add</button>}
 
             </form>

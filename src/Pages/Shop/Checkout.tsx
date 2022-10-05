@@ -42,7 +42,7 @@ const Checkout = () => {
     }
 
     useEffect(() => {
-        fetch_zones()
+        fetch_zones!()
         if (cart && cart.items.length === 0) {
             return history.push(`/shop`)
         }

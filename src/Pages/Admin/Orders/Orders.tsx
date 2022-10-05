@@ -1,37 +1,42 @@
 import React, { useContext, useEffect } from 'react'
-import { Link } from 'react-router-dom'
 import AdminContext from '../../../store/Admin/admin-context';
 import OrderItem from '../../../components/Admin/Order/OrderItem'
 import RequestStatus from '../../../components/Admin/RequestStatus'
 import Pagination from '../../../components/Common/Pagination'
+import OrdersContext from '../../../store/Admin/orders-context'
+import Filters from '../../../components/Admin/Order/Filters';
 
-const Orders = () => {
+const Orders: React.FC = () => {
     const adminCtx = useContext(AdminContext)
-    const { token } = adminCtx.authMeta
-    const { orders, fetch_orders, ordersMeta, pagination } = adminCtx
-    const { loading, error } = ordersMeta
-    const { currentPage } = pagination
-    const updatePagination = (page: number) => {
-        fetch_orders(token!, page)
+    const ordersCtx = useContext(OrdersContext)
 
+    const { token } = adminCtx.authMeta
+    const { orders, fetch_orders, ordersMeta, update_pagination, pagination } = ordersCtx
+    const { loading, error, filters } = ordersMeta
+    const { currentPage } = pagination
+
+    const updatePagination = (page: number) => {
+        update_pagination({ ...pagination, currentPage: page })
     }
+
     useEffect(() => {
         if (token) {
-            fetch_orders(token, 1)
+            fetch_orders(token)
         }
+    }, [filters, token, currentPage])
 
-    }, [token])
 
-  
+
     return (
 
         <div className="p-4 sm:p-6">
 
             <div className=' mb-5  flex items-center justify-between'>
-                <h2 className="font-bold text-2xl text-left">Orders</h2>
-                {/* <Link to={`/admin/orders/new`} className=' py-2 px-4 text-sm bg-green-400 rounded hover:opacity-70 text-white'>New Order</Link> */}
+                <h1 className="font-bold text-2xl text-left">Orders</h1>
             </div>
-            <RequestStatus loading={loading} error={error} items={orders} label="orders" createNew={false}/>
+            <Filters />
+
+            <RequestStatus loading={loading} error={error} items={orders} label="orders" createNew={false} />
             {!loading && !error && orders.length > 0 && <div className="bg-white shadow overflow-hidden sm:rounded-md">
                 <ul className="divide-y divide-gray-200">
                     {orders.length > 0 && orders.map(order => <OrderItem key={order._id} order={order} />)}

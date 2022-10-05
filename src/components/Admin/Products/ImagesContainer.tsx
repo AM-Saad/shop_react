@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useId, useContext } from 'react'
 import UploadImage from '../../UI/UploadImageInput'
 import AdminItemGallery from '../../UI/AdminItemGallery'
 import AdminContext from '../../../store/Admin/admin-context'
+import ProductsContext from '../../../store/Admin/products-context'
 import ProductResponse from '../../../models/ProductResponse'
 
 type DisplayedImages = {
@@ -15,6 +16,7 @@ const Images: React.FC<{ product: ProductResponse }> = ({ product }) => {
     const id: string = useId();
 
     const adminCtx = useContext(AdminContext)
+    const productsCtx = useContext(ProductsContext)
     const { token } = adminCtx.authMeta
     const { updatingMeta } = adminCtx
 
@@ -46,7 +48,7 @@ const Images: React.FC<{ product: ProductResponse }> = ({ product }) => {
     const deleteImageHandler = (id: string, isNew: boolean) => {
 
         if (!isNew) {
-            return adminCtx.delete_image(product._id, id, token, 'Product')
+            return productsCtx.delete_image(product._id, id, token, 'Product')
         }
 
         setImagesToDisplay((prevState) => {
@@ -59,7 +61,7 @@ const Images: React.FC<{ product: ProductResponse }> = ({ product }) => {
     }
 
     const uploadImage = () => {
-        adminCtx.upload_image(product._id, imagesToUpload, token, 'Product')
+        productsCtx.upload_image(product._id, imagesToUpload, token, 'Product')
         cancelUpload.current()
         setImagesToUpload([])
         setImagesToDisplay([])

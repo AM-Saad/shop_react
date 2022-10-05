@@ -1,6 +1,7 @@
-import { Fragment, useState } from 'react'
+import { Fragment, useState, useContext } from 'react'
 import { Dialog, Menu, Transition } from '@headlessui/react'
 import { Link } from 'react-router-dom'
+import AdminContext from '../../store/Admin/admin-context'
 import {
     CogIcon,
     HomeIcon,
@@ -14,7 +15,7 @@ import {
 } from '@heroicons/react/outline'
 
 import { SearchIcon, MapIcon } from '@heroicons/react/solid'
-
+import Search from '../Admin/Search/Search'
 const sidebarNavigation = [
     { name: 'Home', href: '#', icon: HomeIcon, current: false },
     { name: 'Orders', href: '/admin/orders', icon: CashIcon, current: false },
@@ -22,16 +23,16 @@ const sidebarNavigation = [
     { name: 'Category', href: '/admin/category', icon: PhotographIcon, current: false },
     { name: 'Zones', href: '/admin/zones', icon: MapIcon, current: false },
     { name: 'Customers', href: '/admin/customers', icon: UserGroupIcon, current: false },
-    { name: 'Settings', href: '#', icon: CogIcon, current: false },
+    { name: 'Settings', href: '/admin/settings', icon: CogIcon, current: false },
 ]
 const userNavigation = [
     { name: 'Your Profile', href: '#' },
-    { name: 'Sign out', href: '#' },
+    { name: 'Sign out' },
 ]
 const newItemNavigation = [
-    { name: 'New Product', href: '/admin/products/new' },
-    { name: 'New Category', href: '/admin/category/new' },
-    { name: 'New Zone', href: '/admin/zones/new' },
+    { name: 'New Product', href: '/admin/products/create' },
+    { name: 'New Category', href: '/admin/category/create' },
+    { name: 'New Zone', href: '/admin/zones/create' },
 ]
 
 function classNames(...classes: string[]): string {
@@ -39,17 +40,19 @@ function classNames(...classes: string[]): string {
 }
 
 interface Props {
-    children:React.ReactNode
+    children: React.ReactNode
 }
-export default function AdminNav(props:Props) {
+export default function AdminNav(props: Props) {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+    const adminCtx = useContext(AdminContext)
+    const { onLogout } = adminCtx
 
     return (
         <>
 
             <div className="flex min-h-screen">
                 {/* Narrow sidebar */}
-                <div className="hidden w-28 bg-indigo-700 overflow-y-auto md:block">
+                <div className="hidden w-28 main-bg-color overflow-y-auto md:block">
                     <div className="w-full py-6 flex flex-col items-center">
                         <div className="flex-shrink-0 flex items-center">
                             <img
@@ -64,14 +67,14 @@ export default function AdminNav(props:Props) {
                                     key={item.name}
                                     to={item.href}
                                     className={classNames(
-                                        item.current ? 'bg-indigo-800 text-white' : 'text-indigo-100 hover:bg-indigo-800 hover:text-white',
+                                        item.current ? 'bg-white text-white' : 'text-white hover:bg-gray-800 hover:text-white',
                                         'group w-full p-3 rounded-md flex flex-col items-center text-xs font-medium'
                                     )}
                                     aria-current={item.current ? 'page' : undefined}
                                 >
                                     <item.icon
                                         className={classNames(
-                                            item.current ? 'text-white' : 'text-indigo-300 group-hover:text-white',
+                                            item.current ? 'text-white' : 'text-white group-hover:text-white',
                                             'h-6 w-6'
                                         )}
                                         aria-hidden="true"
@@ -145,15 +148,15 @@ export default function AdminNav(props:Props) {
                                                         href={item.href}
                                                         className={classNames(
                                                             item.current
-                                                                ? 'bg-indigo-800 text-white'
-                                                                : 'text-indigo-100 hover:bg-indigo-800 hover:text-white',
+                                                                ? 'bg-white text-white'
+                                                                : 'text-white hover:bg-indigo-800 hover:text-white',
                                                             'group py-2 px-3 rounded-md flex items-center text-sm font-medium'
                                                         )}
                                                         aria-current={item.current ? 'page' : undefined}
                                                     >
                                                         <item.icon
                                                             className={classNames(
-                                                                item.current ? 'text-white' : 'text-indigo-300 group-hover:text-white',
+                                                                item.current ? 'text-white' : 'text-white group-hover:text-white',
                                                                 'mr-3 h-6 w-6'
                                                             )}
                                                             aria-hidden="true"
@@ -185,26 +188,12 @@ export default function AdminNav(props:Props) {
                                 <span className="sr-only">Open sidebar</span>
                                 <MenuAlt2Icon className="h-6 w-6" aria-hidden="true" />
                             </button>
-                            <div className="flex-1 flex justify-between px-4 sm:px-6">
-                                <div className="flex-1 flex">
-                                    <form className="w-full flex md:ml-0" action="#" method="GET">
-                                        <label htmlFor="search-field" className="sr-only">
-                                            Search all files
-                                        </label>
-                                        <div className="relative w-full text-gray-400 focus-within:text-gray-600">
-                                            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center">
-                                                <SearchIcon className="flex-shrink-0 h-5 w-5" aria-hidden="true" />
-                                            </div>
-                                            <input
-                                                name="search-field"
-                                                id="search-field"
-                                                className="h-full w-full border-transparent py-2 pl-8 pr-3 text-base text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-0 focus:border-transparent focus:placeholder-gray-400"
-                                                placeholder="Search"
-                                                type="search"
-                                            />
-                                        </div>
-                                    </form>
-                                </div>
+                            <div className="flex-1 flex justify-between items-center px-4 sm:px-6 sm:relative">
+
+                                <Search />
+
+
+
                                 <div className="ml-2 flex items-center space-x-4 sm:ml-6 sm:space-x-6">
                                     {/* Profile dropdown */}
                                     <Menu as="div" className="relative flex-shrink-0">
@@ -233,6 +222,7 @@ export default function AdminNav(props:Props) {
                                                         {({ active }) => (
                                                             <a
                                                                 href={item.href}
+                                                                onClick={() => item.name === "Sign out" ? onLogout : null}
                                                                 className={classNames(
                                                                     active ? 'bg-gray-100' : '',
                                                                     'block px-4 py-2 text-sm text-gray-700'
@@ -248,9 +238,9 @@ export default function AdminNav(props:Props) {
                                     </Menu>
                                     <Menu as="div" className="relative flex-shrink-0">
                                         <div>
-                                            <Menu.Button className="flex bg-indigo-600 p-1 rounded-full items-center justify-center text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                            <Menu.Button className="flex main-bg-color p-1 rounded-full items-center justify-center text-white hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                                                 <span className="sr-only">Create New Items</span>
-                                                <PlusSmIcon className="h-6 w-6" aria-hidden="true" />
+                                                <PlusSmIcon className="h-6 w-6 " aria-hidden="true" />
 
                                             </Menu.Button>
                                         </div>

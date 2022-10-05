@@ -4,13 +4,15 @@ import Tooltip from '../../../components/UI/Tooltip'
 import { useDetectOutsideClick } from "../../../hooks/use-detect-outside-click";
 import { getOrderStatusColor, ORDER_STATUS_LABELS } from '../../../models/Order';
 import AdminContext from '../../../store/Admin/admin-context'
+import OrdersContext from '../../../store/Admin/orders-context'
 
 const statuses = Array.from(ORDER_STATUS_LABELS.values());
 
 const OrderStatus = () => {
     const adminCtx = useContext(AdminContext)
+    const ordersCtx = useContext(OrdersContext)
     const { token } = adminCtx.authMeta
-    const { currentOrder, change_order_status, updatingMeta } = adminCtx
+    const { currentOrder, change_order_status } = ordersCtx
 
     const dropdownRef = useRef(null);
     const [isTooltipActive, setTooltipActive]: any = useDetectOutsideClick(dropdownRef, false);
@@ -43,8 +45,8 @@ const OrderStatus = () => {
                         </select>
                         <div className='flex mt-4 justify-end'>
 
-                            <button onClick={update} className={`py-2 px-3 text-sm bg-green-400 rounded hover:opacity-70 text-white ${updatingMeta.loading ? 'opacity-70' : ''}`}>
-                                {updatingMeta.loading ? 'Update...' : 'Update'}
+                            <button onClick={update} className={`py-2 px-3 text-sm bg-green-400 rounded hover:opacity-70 text-white ${adminCtx.updatingMeta.loading ? 'opacity-70' : ''}`}>
+                                {adminCtx.updatingMeta.loading ? 'Update...' : 'Update'}
                             </button>
                         </div>
                     </div>

@@ -41,7 +41,8 @@ const AddProduct: React.FC = () => {
 
     }
     return (
-        <section className='mt-10'>
+        <section className='mt-10 p-4 sm:p-6 '>
+
             <h1 className='text-2xl font-bold mb-4'>New Category</h1>
 
             <NewCategoryForm onNewCategory={saveNewCategory} />

@@ -3,12 +3,12 @@ import { useHistory } from "react-router-dom"
 import { UserContextInterface, AuthMeta } from '../../models/UserContextInterface'
 import Meta from '../../models/Meta'
 import { Cart } from '../../models/Cart'
-import ProductResponse from '../../models/ProductResponse'
+import ProductResponse, { ProductsMeta } from '../../models/ProductResponse'
 import Pagination from '../../models/Pagination'
 import Checkout from '../../models/Checkout'
 
 const initialPagination = {
-    itemsPerPage: 1,
+    itemsPerPage: 10,
     currentPage: 1,
     hasNextPage: false,
     hasPrevPage: false,
@@ -23,8 +23,8 @@ const UserContext = React.createContext<UserContextInterface>({
     url: 'http://localhost:8000',
     isLoggedIn: false,
     authMeta: { user: null, token: null, loading: false, error: null },
-    pagination: initialPagination,
-    update_pagination: (data: Pagination) => { },
+    update_products_pagination: (data: Pagination) => { },
+    productsMeta: { loading: true, error: null, pagination: initialPagination, filters: {} },
     cart: null,
     onLogin: (email: string, password: string) => { },
     onLogout: () => { },
@@ -41,7 +41,7 @@ const UserContext = React.createContext<UserContextInterface>({
     searchMeta: { loading: false, error: null },
     zonesMeta: { loading: true, error: null },
     fetch_zones: () => { },
-    zones: []
+    zones: [],
 
 
 
@@ -52,12 +52,12 @@ export const UserContextProvider: React.FC<{ children?: React.ReactNode; }> = (p
     const [authMeta, setAuthMeta] = useState<AuthMeta>({ user: null, token: null, loading: false, error: null })
     const [cartMeta, setCartMeta] = useState<Meta>({ loading: false, error: null })
     const [searchMeta, setSearchMeta] = useState<Meta>({ loading: false, error: null })
-    const [pagination, setPagination] = useState<Pagination>(initialPagination)
     const [cartIsOpen, setCartIsOpen] = useState<boolean>(false)
     const [cart, setCart] = useState<Cart | null>(null)
     const [checkoutMeta, setCheckoutMeta] = useState<Meta>({ loading: false, error: null })
     const [zonesMeta, setZonesMeta] = useState<Meta>({ loading: false, error: null })
     const [zones, setZones] = useState([])
+    const [productsMeta, setProductsMeta] = useState<ProductsMeta>({ loading: false, error: null, pagination: initialPagination, filters: {} })
 
     let history = useHistory()
 
@@ -155,6 +155,7 @@ export const UserContextProvider: React.FC<{ children?: React.ReactNode; }> = (p
             const json = await response.json()
             if (response.status === 200) {
                 setCartMeta((prevState) => { return { ...prevState, user: json.user, loading: false, error: null } })
+                localStorage.setItem('cid', json.cart.sessionId)
                 return setCart(json.cart)
             }
             return setCartMeta((prevState) => { return { ...prevState, loading: false, error: 'Something went wrong, we cannot find your cart...' } })
@@ -181,6 +182,8 @@ export const UserContextProvider: React.FC<{ children?: React.ReactNode; }> = (p
             const json = await response.json()
             if (response.status === 200) {
                 setCartMeta((prevState) => { return { ...prevState, user: json.user, loading: false, error: null } })
+                localStorage.setItem('cid', json.cart.sessionId)
+
                 return setCart(json.cart)
             }
             return setCartMeta((prevState) => { return { ...prevState, loading: false, error: 'Something went wrong, we cannot find your cart...' } })
@@ -206,7 +209,7 @@ export const UserContextProvider: React.FC<{ children?: React.ReactNode; }> = (p
             const json = await response.json()
             if (response.status === 200) {
                 setCartMeta((prevState) => { return { ...prevState, user: json.user, loading: false, error: null } })
-                console.log(cart)
+                localStorage.setItem('cid', json.cart.sessionId)
                 setCart(json.cart)
                 return setCartIsOpen(true)
             }
@@ -321,8 +324,10 @@ export const UserContextProvider: React.FC<{ children?: React.ReactNode; }> = (p
             return setZonesMeta({ loading: false, error: 'Something went wrong' })
         }
     }
-    const update_pagination = async (data: Pagination) => {
-        return setPagination(data)
+    const update_products_pagination = async (data: Pagination) => {
+        return setProductsMeta((prevState) => {
+            return { ...prevState, pagination: data }
+        })
     }
     const logout = () => {
         setIsLoggedIn(false)
@@ -352,12 +357,12 @@ export const UserContextProvider: React.FC<{ children?: React.ReactNode; }> = (p
         isLoggedIn: isLoggedIn,
         authMeta,
         checkoutMeta,
-        pagination,
-        update_pagination,
         checkout,
         zones,
         fetch_zones,
         zonesMeta,
+        productsMeta,
+        update_products_pagination,
         url: 'http://localhost:8000'
     }
 

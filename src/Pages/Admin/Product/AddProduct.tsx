@@ -2,11 +2,13 @@ import React, { useContext, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 
 import NewProductForm from '../../../components/Admin/Forms/NewProductForm'
+import ProductsContext from '../../../store/Admin/products-context'
 import AdminContext from '../../../store/Admin/admin-context'
 import { NotificationModalContext } from '../../../store/Notification/notification-context'
 
 import Product from '../../../models/Product'
 const AddProduct: React.FC = () => {
+    const productsCtx = useContext(ProductsContext)
     const adminCtx = useContext(AdminContext)
     const { token } = adminCtx.authMeta
     const { fetch_categories } = adminCtx
@@ -52,7 +54,7 @@ const AddProduct: React.FC = () => {
     }
     useEffect(() => {
         if (token) {
-            fetch_categories(token, 1)
+            fetch_categories(token  )
         }
     }, [token])
     return (

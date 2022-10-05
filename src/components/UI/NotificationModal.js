@@ -29,7 +29,7 @@ export default function Notification(props) {
               <div className="p-4">
                 <div className="flex items-start">
                   <div className="flex-shrink-0">
-                    {props.message.title != 'Error' && <CheckCircleIcon className={`h-6 w-6 text-green-400`} aria-hidden="true" />}
+                    {props.message.title !== 'Error' && <CheckCircleIcon className={`h-6 w-6 text-green-400`} aria-hidden="true" />}
                     {props.message.title === 'Error' && <XCircleIcon className={`h-6 w-6 text-red-400`} aria-hidden="true" />}
                   </div>
                   <div className="ml-3 w-0 flex-1 pt-0.5">

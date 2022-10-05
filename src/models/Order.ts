@@ -1,5 +1,7 @@
 import { SelectedAttribute } from './Attribute'
+import PaginationType from './Pagination';
 
+import Meta from './Meta';
 
 export enum OrderStatus {
     Panding = 0,
@@ -78,3 +80,21 @@ export interface OrderItem {
     image: string
 
 }
+
+export interface OrdersMeta extends Meta{
+    pagination?:PaginationType
+    filters: {
+        name?: string | null;
+        id?: string | null;
+        min?: string | null;
+        max?: string | null;
+        minQty?:string | null;
+        maxQty?:string | null;
+        from?:string | null;
+        to?:string | null;
+        slug?: string | null;
+        status?: string[],
+    }
+
+}
+

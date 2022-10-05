@@ -46,7 +46,7 @@ const Login: React.FC = () => {
     const ctx = useContext(AdminContext)
     const [emailState, dispatchEmailState] = useReducer(emailReducer, { value: '', isValid: false })
     const [passwordState, dispatchPasswordState] = useReducer(passwordReducer, { value: '', isValid: false })
-    const [formIsValid, setFormIsValid] = useState<boolean | null>(null)
+    const [formIsValid, setFormIsValid] = useState<boolean | null>(false)
     const [errorMsg, setErrorMsg] = useState(ctx.authMeta.error)
 
 
@@ -69,7 +69,6 @@ const Login: React.FC = () => {
     }
     const checkPasswordValidity = (e: any) => {
         dispatchPasswordState({ type: ActionKind.INPUT_BLUR, value: '' })
-
     }
 
     const { isValid: emailValid } = emailState
@@ -80,24 +79,6 @@ const Login: React.FC = () => {
         setFormIsValid(emailValid && passwordValid)
     }, [ctx, emailValid, passwordValid])
 
-    const SubmitButton = () => {
-        if (ctx.authMeta.loading) {
-            return <button
-                className="opacity-30 w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-                Loading...
-            </button>
-        } else {
-            return <button
-                type="submit"
-                disabled={ctx.authMeta.loading || !formIsValid}
-                className={`${!formIsValid ? 'opacity-30 ' : ' '}  w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
-            >
-                Sign in
-            </button>
-
-        }
-    }
 
     return <>
 
@@ -109,12 +90,7 @@ const Login: React.FC = () => {
                     alt="Workflow"
                 />
                 <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Sign in to your account</h2>
-                <p className="mt-2 text-center text-sm text-gray-600">
-                    Or{' '}
-                    <a href="/signup" className="font-medium text-indigo-600 hover:text-indigo-500">
-                        Register Here
-                    </a>
-                </p>
+
             </div>
 
             <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
@@ -134,6 +110,7 @@ const Login: React.FC = () => {
                                     onBlur={checkEmailValidity}
                                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                 />
+                                {!emailState.isValid && <p>Please add your email</p>}
                             </div>
                         </div>
 
@@ -175,7 +152,13 @@ const Login: React.FC = () => {
                         </div>
 
                         <div>
-                            {SubmitButton()}
+                            <button
+                                type="submit"
+                                disabled={ctx.authMeta.loading || !formIsValid}
+                                className={`${!formIsValid ? 'opacity-30 ' : ' '}  w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
+                            >
+                                {ctx.authMeta.loading ? 'Loading...' : 'Sign in'}
+                            </button>
                         </div>
                     </form>
                 </div>

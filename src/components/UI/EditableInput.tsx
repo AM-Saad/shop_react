@@ -1,8 +1,9 @@
-import React, { useEffect, useState, useMemo } from 'react'
-import { useIsFirstRender } from '../../hooks/use-is-first-render';
+import React, { useEffect, useState } from 'react'
 
 
-
+function isEmptyOrSpaces(str: string | number) {
+  return str === null || str === undefined || (typeof str === 'string' && str.match(/^ *$/) !== null);
+}
 const EditIcon: React.FC<{
   startEdit: () => void;
   isEdit: boolean;
@@ -25,30 +26,26 @@ const EditIcon: React.FC<{
 }
 
 
-function isEmptyOrSpaces(str: string | number) {
-  return str === null || (typeof str === 'string' && str.match(/^ *$/) !== null);
-}
-
-
-
 interface Props {
   label: string,
   inputType: string;
   defaultVal: string | number,
-  loading: boolean;
+  loading?: boolean;
   onSave: (value: string | number) => void
   required?: boolean
   validationMessage?: string
-  classes: string
+  updateBtnText?: string
+  cancelBtnText?: string
+  id?: string;
+  error?: boolean;
 }
 const EditableInput: React.FC<Props> = ((props, ref) => {
 
-  const { loading, inputType, label, classes, required, validationMessage, onSave } = props
+  const { loading, inputType, label, required, validationMessage, onSave, defaultVal, updateBtnText, cancelBtnText, id, error = false } = props
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [isTouched, setIsTouched] = useState<boolean>(false)
-  const [defaultVal, setDefault] = useState<string | number>(props.defaultVal)
-  const [newVal, setNewVal] = useState<string | number>('')
-  const [error, setError] = useState<string | null>(null)
+  const [newVal, setNewVal] = useState<string | number>(defaultVal)
+  const [validationError, setValidationError] = useState<string | null>(null)
 
   // By Default the Loading is false 
   // we need to track when the Loading became false Only after being true
@@ -61,72 +58,87 @@ const EditableInput: React.FC<Props> = ((props, ref) => {
     }
   }
 
-
-
   const handleChange = (e: any) => {
-    setNewVal(e.target.value);
-  };
+    setValidationError(null)
+    if (isEditing && isTouched) {
+      if (required && isEmptyOrSpaces(e.target.value)) {
+        setValidationError(validationMessage || 'This field is required!')
+      }
+    }
+    setNewVal(e.target.value)
+  }
+
   const cancel = (): void => {
     setIsEditing(false)
-    setNewVal(props.defaultVal)
+    setValidationError(null)
+    setNewVal(defaultVal)
   }
   const submit = (): void => {
-    setIsTouched(true)
+    setValidationError(null)
     if (required && isEmptyOrSpaces(newVal)) {
-      return setError(validationMessage || 'This field is required')
+      return setValidationError(validationMessage || 'This field is required!')
+    }
+    if (loading === undefined || loading === null) {
+      setIsEditing(false)
     }
     return onSave(newVal)
   }
 
-  const checkValidation = (): void => {
-    if (required && isEmptyOrSpaces(defaultVal)) {
-      return setError(validationMessage || 'This field is required')
-    }
-  }
   useEffect(() => {
 
     document.addEventListener('keydown', checkKeyboardEvent)
 
-    checkValidation()
     // Finished will be (1) only if the Loading became true
     // If the Loading became false Again after Finished became (1) then finish the editing
-    if (loading) setFinished(1)
-    if (!loading && Finished === 1 && isTouched) setIsEditing(false)
-    setDefault(props.defaultVal)
-    console.log(newVal)
-
+    if (loading !== undefined || loading !== null) {
+      if (loading) setFinished(1)
+      if (!loading && Finished === 1 && isTouched) {
+        setIsEditing(false)
+        setIsTouched(false)
+      }
+    }
     return () => {
       setFinished(0)
-      setError(null)
       document.removeEventListener('keydown', checkKeyboardEvent)
     }
-  }, [isTouched, loading, error, props.defaultVal])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isTouched, loading, newVal])
+
+
+  useEffect(() => {
+    console.log(error, defaultVal)
+    setNewVal(defaultVal)
+  }, [defaultVal, error])
+
 
   return (
     <>
-      <div className="text-left border-b-1-g mb-6 pb-2 border-b">
+      <div className="editable-input text-left border-b-1-g mb-6 pb-2 border-b" key={id} id={id}>
         <div className="flex items-center mb-2 mt-3">
-          <label htmlFor={`update_${label}`} className="text-xl text-gray-600 mr-3">{label}</label>
+          <label htmlFor={`update_${label}`} className="text-xl text-gray-600 mr-3 editable-input_label">{label}</label>
           <EditIcon isEdit={isEditing} startEdit={() => setIsEditing(true)} />
         </div>
 
-        <p className={`${isEditing ? 'hidden' : 'block'} mr-5  font-medium text-lg`}>{defaultVal || 'n.c.'}</p>
+        {!isEditing && <p className={` mr-5  font-medium text-lg editable-input_value`}>{newVal || 'n.c.'}</p>}
         {isEditing && <div >
           <input
             onFocus={() => setIsTouched(true)}
             onBlur={() => setIsTouched(false)}
             disabled={loading}
             autoFocus
-            className={classes}
-            onKeyUp={handleChange}
+            className="rounded shadow w-full p-large b-r-medium m-t-large font-medium p-2 outline-none editable-input_input"
+            onChange={handleChange}
             id={`update_${label}`}
             type={inputType}
             placeholder={`Add ${label}`}
-            defaultValue={defaultVal} />
-          {required && <p className='text-red-400 mt-2'>{error}</p>}
+            defaultValue={newVal} />
+          <p className='text-red-400 mt-2 editable-input_error'>{validationError}</p>
           <div className="flex justify-end gap-2 mt-3">
-            <button type="button" className="shadow py-2 px-4 text-sm bg-gray-400 rounded hover:opacity-70 text-white" onClick={cancel}>Cancel</button>
-            <button type="button" className="shadow py-2 px-4 text-sm bg-green-500 rounded hover:opacity-70 text-white" onClick={submit}>{loading ? 'Update...' : 'Update'}</button>
+            <button type="button" className="shadow py-2 px-4 text-sm bg-gray-400 rounded hover:opacity-70 text-white editable-input_cancel" onClick={cancel}>{loading ? `${cancelBtnText ? cancelBtnText : 'Cancel'}...` : `${cancelBtnText ? cancelBtnText : 'Cancel'}`}</button>
+            <button
+              type="button"
+              className={`shadow py-2 px-4 text-sm bg-green-500 rounded hover:opacity-70 text-white editable-input_update ${(isEditing && error) ? 'opacity-70' : ''}`}
+              onClick={submit}>{loading ? `${updateBtnText ? updateBtnText : 'Update'}...` : `${updateBtnText ? updateBtnText : 'Update'}`}</button>
           </div>
         </div>}
       </div>

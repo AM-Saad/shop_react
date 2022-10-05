@@ -1,6 +1,6 @@
 import { Cart } from './Cart'
 import Meta from './Meta'
-import Product from './ProductResponse'
+import Product, { ProductsMeta } from './ProductResponse'
 import Pagination from './Pagination'
 import Checkout from './Checkout'
 import Zone from './Zone';
@@ -20,14 +20,20 @@ export interface AuthMeta extends Meta {
     token: string | null;
 
 }
+export interface SearchMeta extends Meta {
+    from?: string
+    to?: string
+    price?: number
+    pagination?: Pagination
+}
 
 export interface UserContextInterface {
     url: string;
     isLoggedIn: boolean;
     authMeta: AuthMeta;
-    pagination: Pagination
-    update_pagination?: (query: Pagination) => void
-
+    initialPagination?: Pagination
+    update_products_pagination?: (query: Pagination) => void
+    productsMeta?: ProductsMeta
 
     cart?: Cart | null;
     onLogin: (email: string, password: string) => void,
@@ -41,12 +47,12 @@ export interface UserContextInterface {
     delete_cart_item?: (productId: string) => void
     cartIsOpen?: boolean
     search_products?: (query: string) => Promise<Product[]> | null
-    searchMeta?: Meta,
+    searchMeta?: SearchMeta,
     checkout?: (payload: Checkout) => void
     checkoutMeta?: Meta
-    zonesMeta: Meta,
-    zones: Zone[],
-    fetch_zones: () => void,
+    zonesMeta?: Meta,
+    zones?: Zone[],
+    fetch_zones?: () => void,
 
 
 }

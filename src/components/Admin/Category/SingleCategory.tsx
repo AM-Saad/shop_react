@@ -6,6 +6,7 @@ import AdminItemGallery from '../../UI/AdminItemGallery'
 import Category from '../../../models/Category'
 import EditableInput from '../../UI/EditableInput'
 import EditSubCategory from './EditSubCategory'
+import ToggleBtn from '../../UI/ToggleBtn'
 
 
 const SingleCategory: React.FC<{ category: Category }> = (props) => {
@@ -40,16 +41,27 @@ const SingleCategory: React.FC<{ category: Category }> = (props) => {
 
 
   const uploadImage = () => {
-    adminCtx.upload_image(category._id ?? '', imageFiles, token, 'Category')
+    adminCtx.upload_category_image(category._id ?? '', imageFiles, token, 'Category')
 
   }
   const deleteImageHandler = (image: string) => {
-    adminCtx.delete_image(category._id ?? '', image, token, 'Category')
+    adminCtx.delete_category_image(category._id ?? '', image, token, 'Category')
   }
 
   return (
     <>
-      <div className='grid sm:grid-cols-2 py-6 gap-8'>
+      <div className='flex gap-5 items-center mt-10'>
+
+        <div className="flex">
+          <span className="text-xl text-gray-600 mb-2 mr-2 block">Featured</span>
+          <ToggleBtn value={category!.featured} onSetValue={(value: any) => adminCtx.update_partial_category([{ featured: value }], token)} />
+        </div>
+        <div className="flex">
+          <span className="text-xl text-gray-600 mb-2 mr-2 block">Active</span>
+          <ToggleBtn value={category!.active} onSetValue={(value: any) => adminCtx.update_partial_category([{ active: value }], token)} />
+        </div>
+      </div>
+      <div className='grid sm:grid-cols-2 py-3 gap-10'>
         <div>
           <EditableInput
             label='Name'
@@ -59,7 +71,6 @@ const SingleCategory: React.FC<{ category: Category }> = (props) => {
             loading={updatingMeta.loading}
             required={true}
             validationMessage={'Name is required'}
-            classes={"border-1-b bg-lightgray w-full p-large b-r-medium m-t-large font-medium p-2"}
           />
           <EditSubCategory defaultVal={category.subCategory} loading={updatingMeta.loading} onSave={(value: string[]) => adminCtx.update_partial_category([{ subCategory: value }], token)} />
         </div>

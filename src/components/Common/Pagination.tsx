@@ -113,7 +113,7 @@ const Pagination: React.FC<Props> = ({ pagination, update }) => {
             <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                 <div>
                     <p className="text-sm text-gray-700">
-                        Showing <span className="font-medium">{pagination.skip}</span> to <span className="font-medium">{itemCount() + (pagination.currentPage - 1) * pagination.itemsPerPage}</span> of{' '}
+                        Showing <span className="font-medium">{pagination.skip + 1}</span> to <span className="font-medium">{itemCount() + (pagination.currentPage - 1) * pagination.itemsPerPage}</span> of{' '}
                         <span className="font-medium">{pagination.total}</span> results
                     </p>
                 </div>
@@ -131,9 +131,10 @@ const Pagination: React.FC<Props> = ({ pagination, update }) => {
                             <button
                                 onClick={() => handlePageSelected(page.index + 1)}
                                 type="button"
+                                key={page.index + 1}
                                 className={`
                             ${page.selected ?
-                                        'bg-blue-600 border-blue-600 text-white cursor-default' :
+                                        'main-bg-color border-blue-600 text-white cursor-default' :
                                         'bg-white text-sm leading-5 font-medium text-gray-700 hover:text-gray-500 focus:z-10 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150 border-gray-300'
                                     }
                                         -ml-px relative inline-flex items-center px-4 py-2 border
