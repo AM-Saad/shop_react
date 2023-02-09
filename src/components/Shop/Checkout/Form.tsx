@@ -15,7 +15,6 @@ import CheckoutError from './CheckoutError';
 import UserContext from '../../../store/User/user_context'
 import { PlaceOrderButton } from './PlaceOrderButton';
 
-
 const validationScheme = Yup.object({
     firstname: Yup.string()
         .max(15, "Must be 15 characters or less")
@@ -24,7 +23,7 @@ const validationScheme = Yup.object({
         .max(20, "Must be 20 characters or less")
         .required("Required"),
     email: Yup.string()
-        .email("Invalid email addresss")
+        .email("Invalid email address")
         .required("Required"),
     phone: Yup.string()
         .max(20, "Must be 20 characters or less")
@@ -66,7 +65,6 @@ const FormObserver: React.FC = () => {
 const MyForm: React.FC<{ confirmCheckout: (form: CheckoutInterface) => void }> = ({ confirmCheckout }) => {
     const { state } = useStateMachine({ updateForm });
     const { cartMeta, checkoutMeta, zones } = useContext(UserContext)
-
 
     return (
         <Formik

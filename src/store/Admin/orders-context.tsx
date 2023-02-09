@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { NotificationModalContext } from "../Notification/notification-context"
+// import { NotificationModalContext } from "../Notification/notification-context"
 import { useHistory, useLocation } from "react-router-dom"
 
 import OrderContextType from '../../models/OrdersContext';
@@ -7,6 +7,12 @@ import Pagination from '../../models/Pagination';
 import Order, { OrdersMeta } from '../../models/Order';
 import Meta from '../../models/Meta';
 import serialize from '../../util/serialize';
+import { OrderRepository } from '../../lib/OrderRepository';
+import Response, { State } from '../../models/Respone';
+import { toast } from "react-toastify";
+
+const OrderRepo = new OrderRepository()
+
 const initialPagination = {
     itemsPerPage: 10,
     currentPage: 1,
@@ -25,12 +31,14 @@ const OrdersContext = React.createContext<OrderContextType>({
     pagination: initialPagination,
     currentOrder: null,
 
-    fetch_orders: (token?: string) => { },
-    fetch_order: (id: string, token: string | null) => { },
-    delete_order: (id: string, token: string | null) => { },
-    change_order_status: (status: number, token: string | null) => { },
+    fetch_orders: () => { },
+    fetch_order: (id: string) => { },
+    delete_order: (id: string) => { },
+    change_order_status: (status: number, reason?: string) => { },
+    cancel_order: (reason: string) => { },
     update_meta: (data: any) => { },
-    update_pagination: (data: Pagination) => { }
+    update_pagination: (data: Pagination) => { },
+    updatingMeta: { loading: false, error: null }
 
 })
 
@@ -42,16 +50,13 @@ export const OrdersContextProvider: React.FC<{ children?: React.ReactNode; }> = 
 
     const [ordersMeta, setOrdersMeta] = useState<OrdersMeta>({ loading: false, error: null, filters: {} })
     const [pagination, setPagination] = useState(initialPagination)
-    const notificationCtx = useContext(NotificationModalContext)
     const [updatingMeta, setUpdatingMeta] = useState<Meta>({ loading: false, error: null })
 
 
 
-    const fetch_orders = async (token: string) => {
-        setOrdersMeta((prevState => {
-            return { ...prevState, loading: true, error: null }
-        }))
-        const { from, to,  min, max, minQty, maxQty, status } = ordersMeta.filters
+    const fetch_orders = async () => {
+        setOrdersMeta((prevState => { return { ...prevState, loading: true, error: null } }))
+        const { from, to, min, max, minQty, maxQty, status } = ordersMeta.filters
         const params = new Map<string, string | string[]>();
         if (min) params.set("min", min);
         if (max) params.set("max", max);
@@ -63,142 +68,80 @@ export const OrdersContextProvider: React.FC<{ children?: React.ReactNode; }> = 
             params.set("status", status.map((s) => s.toString()));
         }
         const paramsUrl = serialize(params)
-        try {
-            const response = await fetch(`http://localhost:8000/admin/api/orders?page=${pagination.currentPage}&&itemsPerPage=${pagination.itemsPerPage}&&${paramsUrl}`, {
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    Authorization: "Bearer " + token,
 
-                }
-            })
-            const json = await response.json()
-            setOrdersMeta((prevState => {
-                return { ...prevState, loading: false, error: null }
-            }))
-            if (response.status === 200) {
-                if (json.pagination) {
-                    update_pagination!(json.pagination)
-                }
-                return setOrders(json.items)
-            }
-            return setOrdersMeta((prevState => {
-                return { ...prevState, loading: false, error: json.message }
-            }))
+        const { state, message, items }: Response = await OrderRepo.fetch_orders(pagination, paramsUrl)
 
+        setOrdersMeta((prevState => { return { ...prevState, loading: false, error: null } }))
 
-
-        } catch (error) {
-            return setOrdersMeta((prevState => {
-                return { ...prevState, loading: false, error: 'Something went wrong' }
-            }))
-
+        if (state === State.SUCCESS) {
+            setPagination(items.pagination)
+            return setOrders(items.items)
         }
+        return setOrdersMeta((prevState => { return { ...prevState, loading: false, error: message } }))
+
+
     }
-    const fetch_order = async (id: string, token: string | null) => {
-        setOrdersMeta((prevState => {
-            return { ...prevState, loading: true, error: null }
-        }))
-        try {
-            const response = await fetch(`http://localhost:8000/admin/api/orders/${id}`, {
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    Authorization: "Bearer " + token,
+    const fetch_order = async (id: string) => {
+        setOrdersMeta((prevState => { return { ...prevState, loading: true, error: null } }))
+        const { state, message, items }: Response = await OrderRepo.fetch_order(id)
 
-                }
-            })
-            const json = await response.json()
-            setOrdersMeta((prevState => {
-                return { ...prevState, loading: false, error: null }
-            }))
-            if (response.status === 200) {
-                return setCurrentOrder(json.item)
-            }
-            return setOrdersMeta((prevState => {
-                return { ...prevState, loading: false, error: json.message }
-            }))
-
-
-        } catch (error) {
-            setOrdersMeta((prevState => {
-                return { ...prevState, loading: false, error: 'Something went wrong' }
-            }))
-
-
+        setOrdersMeta((prevState => { return { ...prevState, loading: false } }))
+        if (state === State.SUCCESS) {
+            return setCurrentOrder(items)
         }
+        setOrdersMeta((prevState => { return { ...prevState, error: message } }))
+
     }
 
-    const delete_order = async (id: string, token: string | null) => {
-        setOrdersMeta((prevState => {
-            return { ...prevState, loading: true, error: null }
-        }))
-        try {
-            const response = await fetch(`http://localhost:8000/admin/api/orders/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    Authorization: "Bearer " + token,
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            })
-            const json = await response.json()
-            setOrdersMeta((prevState => {
-                return { ...prevState, loading: true, error: null }
-            }))
-            if (response.status === 200) {
-                notificationCtx.showModal({ title: 'Success', message: json.message })
-                return history.push('/admin/orders')
+    const delete_order = async (id: string) => {
+        setOrdersMeta((prevState => { return { ...prevState, loading: true, error: null } }))
 
-            }
-            notificationCtx.showModal({ title: 'Error', message: json.message })
-
-            return setOrdersMeta((prevState => {
-                return { ...prevState, loading: false, error: null }
-            }))
+        const { state, message }: Response = await OrderRepo.delete_order(currentOrder?._id!)
 
 
-        } catch (error) {
-            notificationCtx.showModal({ title: 'Error', message: 'Something went wrong' })
-            return setOrdersMeta((prevState => {
-                return { ...prevState, loading: false, error: null }
-            }))
+        setOrdersMeta((prevState => { return { ...prevState, loading: false } }))
+        toast[state](message)
+
+        if (state === State.SUCCESS) {
+            return history.push('/admin/orders')
 
         }
+        setOrdersMeta((prevState => { return { ...prevState, loading: false, error: message } }))
+
+
     }
 
-    const change_order_status = async (status: number, token: string | null) => {
+
+    const change_order_status = async (status: number, reason?: string) => {
         setUpdatingMeta({ loading: true, error: null })
+        const { state, message, items }: Response = await OrderRepo.change_order_status(currentOrder?._id!, { status, reason })
 
-        try {
-            const response = await fetch(`http://localhost:8000/admin/api/orders/${currentOrder?._id}/status`, {
-                method: 'PUT',
-                body: JSON.stringify({ status: status }),
-                headers: {
-                    Authorization: "Bearer " + token,
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            })
-            const json = await response.json()
-            setUpdatingMeta({ loading: false, error: null })
-            if (response.status === 200) {
-                console.log(json.item)
-                return setCurrentOrder(json.item)
-            }
-            notificationCtx.showModal({ title: 'Error', message: json.message })
-
-            return setUpdatingMeta({ loading: false, error: null })
-
-
-        } catch (error) {
-            notificationCtx.showModal({ title: 'Error', message: 'Something went wrong' })
-            return setUpdatingMeta({ loading: false, error: null })
+        setUpdatingMeta({ loading: false, error: null })
+        if (state === State.SUCCESS) {
+            return setCurrentOrder(items)
         }
+        toast[state](message)
+
+        return setUpdatingMeta({ loading: false, error: message })
     }
+
+    const cancel_order = async (reason: string) => {
+        setUpdatingMeta({ loading: true, error: null })
+        const { state, message, items }: Response = await OrderRepo.cancel_order(currentOrder?._id!, reason)
+
+        setUpdatingMeta({ loading: false, error: null })
+        toast[state](message)
+        if (state === State.SUCCESS) {
+            return setCurrentOrder(items)
+        }
+
+        return setUpdatingMeta({ loading: false, error: message })
+    }
+
     const update_pagination = async (data: Pagination) => {
         return setPagination(data)
     }
+
 
     const update_meta = async (data: any) => {
         setPagination(prevState => { return { ...prevState, currentPage: 1 } })
@@ -216,6 +159,7 @@ export const OrdersContextProvider: React.FC<{ children?: React.ReactNode; }> = 
         fetch_order,
         delete_order,
         change_order_status,
+        cancel_order,
         updatingMeta,
         update_pagination,
         update_meta,

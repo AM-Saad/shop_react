@@ -28,13 +28,16 @@ export interface SearchMeta extends Meta {
 }
 
 export interface UserContextInterface {
-    url: string;
     isLoggedIn: boolean;
     authMeta: AuthMeta;
-    initialPagination?: Pagination
-    update_products_pagination?: (query: Pagination) => void
-    productsMeta?: ProductsMeta
-
+    products:Product[]
+    products_pagination: Pagination
+    update_products_pagination: (query: Pagination) => void
+    productsMeta: ProductsMeta
+    update_products_meta: (data: any) => void;
+    fetch_products: () => void,
+    fetch_categories: () => void,
+    categories: any[];
     cart?: Cart | null;
     onLogin: (email: string, password: string) => void,
     onLogout: () => void,

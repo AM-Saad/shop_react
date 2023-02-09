@@ -22,7 +22,7 @@ const Products = () => {
 
     useEffect(() => {
         if (token) {
-            fetch_products(token)
+            fetch_products()
         }
     }, [filters, token, currentPage])
 

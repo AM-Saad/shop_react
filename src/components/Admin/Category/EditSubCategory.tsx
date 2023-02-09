@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import BadgeWithDelete from '../../UI/BadgeWithDelete'
 import Badge from '../../UI/Badge'
 import EditIcon from '../../UI/EditIcon'
+import AdminContext from '../../../store/Admin/admin-context'
 
 
 
 const EditSubCategory: React.FC<{ defaultVal: string[], loading: boolean; onSave: (value: string[]) => void }> = ((props, ref) => {
     const { loading, onSave } = props
-
-    const [subCategories, setSubCategories] = useState<string[]>(props.defaultVal)
+    const { currentCategory } = useContext(AdminContext)
+    const [subCategories, setSubCategories] = useState<string[]>(currentCategory?.subCategory ?? [])
     const [isEditing, setIsEditing] = useState<boolean>(false)
 
     // By Default the Loading is false 
@@ -25,7 +26,9 @@ const EditSubCategory: React.FC<{ defaultVal: string[], loading: boolean; onSave
                 })
             }
         }
+
     }
+
 
     const checkKeyboardEvent = (e: KeyboardEvent) => {
         if (e.key === "Escape") return cancel()
@@ -34,7 +37,8 @@ const EditSubCategory: React.FC<{ defaultVal: string[], loading: boolean; onSave
 
     const cancel = () => {
         setIsEditing(false)
-        setSubCategories(props.defaultVal)
+        console.log(props.defaultVal)
+        setSubCategories(currentCategory?.subCategory ?? [])
     }
 
 
@@ -47,9 +51,9 @@ const EditSubCategory: React.FC<{ defaultVal: string[], loading: boolean; onSave
     useEffect(() => {
 
         document.addEventListener('keydown', checkKeyboardEvent)
+
         // Finished will be (1) only if the Loading became true
         // If the Loading became false Again after Finished became (1) then finish the editing
-
         if (loading) setFinished(1)
         if (!loading && Finished === 1) setIsEditing(false)
 
@@ -57,12 +61,16 @@ const EditSubCategory: React.FC<{ defaultVal: string[], loading: boolean; onSave
             setFinished(0)
             document.removeEventListener('keydown', checkKeyboardEvent)
         }
+
     }, [props, loading])
+    useEffect(() => { 
+        setSubCategories(currentCategory?.subCategory ?? [])
+     }, [currentCategory])
     return (
 
         <div className="text-left border-b-1-g mb-6 pb-2 border-b-2">
             <div className="flex items-center mb-2 mt-3">
-                <span className="text-xl text-gray-600 mb-2 mr-2">Sub Category</span>
+                <span className="text-xs font-medium text-gray-600 mb-2 mr-2">Sub Category</span>
                 <EditIcon isEdit={isEditing} startEdit={() => { setIsEditing(true) }} />
             </div>
 
@@ -79,9 +87,9 @@ const EditSubCategory: React.FC<{ defaultVal: string[], loading: boolean; onSave
                     name="subCategory"
                     placeholder='Write then press enter to add (e.g T-Shirts)' />
                 {subCategories.map(subCategory => <BadgeWithDelete id={subCategory} key={subCategory} label={subCategory} onDelete={deleteSubCategoryHandler} />)}
-                <div className="flex justify-end gap-2 my-2">
-                    <button type="button" className=" py-2 px-4 text-sm bg-gray-400 rounded hover:opacity-70 text-white" onClick={() => setIsEditing(false)}>Cancel</button>
-                    <button type="button" className=" py-2 px-4 text-sm bg-green-400 rounded hover:opacity-70 text-white" onClick={() => onSave(subCategories)}>{loading ? 'Update...' : 'Update'}</button>
+                <div className="flex justify-end gap-2 my-3">
+                    <button type="button" className=" py-1.5 px-4 text-sm bg-gray-400 rounded hover:opacity-70 text-white" onClick={cancel}>Cancel</button>
+                    <button type="button" className=" py-1.5 px-4 text-sm bg-green-400 rounded hover:opacity-70 text-white" onClick={() => onSave(subCategories)}>{loading ? 'Update...' : 'Update'}</button>
                 </div>
             </div>}
         </div>

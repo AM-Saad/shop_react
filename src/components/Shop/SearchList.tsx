@@ -5,7 +5,7 @@ import UserContext from '../../store/User/user_context'
 
 
 const SearchList: React.FC<{ products: ProductResponse[] }> = ({ products }) => {
-    const { url, searchMeta } = useContext(UserContext)
+    const { searchMeta } = useContext(UserContext)
 
     return (
 
@@ -16,7 +16,7 @@ const SearchList: React.FC<{ products: ProductResponse[] }> = ({ products }) => 
                         <li key={product._id} className="py-4">
                             <div className="flex items-center space-x-4">
                                 <div className="flex-shrink-0">
-                                    <img className="h-8 w-8 rounded-full" src={url + product.images[0]} alt="" />
+                                    <img className="h-8 w-8 rounded-full" src={import.meta.env.REACT_APP_REST_API_URL + product.images[0]} alt="" />
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <p className="text-sm font-medium text-gray-900 truncate">{product.name}</p>

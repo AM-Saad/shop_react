@@ -5,7 +5,7 @@ import EditableInput from '../../UI/EditableInput'
 const GeneralInfo = () => {
     const adminCtx = useContext(AdminContext)
     const { update_partial_admin, } = adminCtx
-    const { user, loading, token, error } = adminCtx.authMeta
+    const { user, loading, error } = adminCtx.authMeta
     return (
         <div>
             <h2 className='font-medium'>General Info </h2>
@@ -14,7 +14,7 @@ const GeneralInfo = () => {
                     loading={loading}
                     defaultVal={user?.email!}
                     required={true}
-                    onSave={(value) => { update_partial_admin([{ email: value }], token) }}
+                    onSave={(value) => { update_partial_admin([{ email: value }]) }}
                     inputType={'text'}
                     label={'Email'}
                     error={error ? true : false}
@@ -25,8 +25,7 @@ const GeneralInfo = () => {
                     loading={loading}
                     defaultVal={user?.name!}
                     required={true}
-                    onSave={(value) => { update_partial_admin([{ name: value }], token) }}
-
+                    onSave={(value) => { update_partial_admin([{ name: value }]) }}
                     inputType={'text'}
                     label={'Name'}
                     error={error ? true : false}

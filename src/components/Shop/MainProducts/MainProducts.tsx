@@ -12,12 +12,12 @@ import ProductResponse from '../../../models/ProductResponse'
 export default function MainProducts() {
   const { sendRequest: fetch_products, isLoading, error } = useHttp()
   const [products, setProducts] = useState<Product[]>([])
-  const { url } = useContext(AuthContext)
+
   const set_products = (data: HookResponse<ProductResponse[]>) => {
     setProducts(data.items!)
   }
   const fetchProducts = () => {
-    fetch_products({ url: `${url}/products?featured=false` }, set_products)
+    fetch_products({ url: `${import.meta.env.REACT_APP_REST_API_URL}/products?featured=false` }, set_products)
 
   }
   useEffect(() => {
@@ -29,7 +29,7 @@ export default function MainProducts() {
       <h2 className="text-2xl font-extrabold tracking-tight text-left mb-5">Customers also Like</h2>
       {!isLoading && error && <FetchError reload={fetchProducts} error={error} />}
 
-      <ul role="list" className=" grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
+      <ul role="list" className=" grid grid-cols-2 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
         {isLoading && <Loading />}
         {!isLoading && !error && products.map((product) => <ProductItem  key={product._id} product={product} />)}
       </ul>

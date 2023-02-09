@@ -138,3 +138,7 @@ code {
   pointer-events: all;
   position: relative;
 }
+
+.Toastify__toast-theme--colored.Toastify__toast--success{
+  background: #6fd472!important;
+}

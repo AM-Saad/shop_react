@@ -118,7 +118,7 @@ const Pagination: React.FC<Props> = ({ pagination, update }) => {
                     </p>
                 </div>
                 <div>
-                    <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                    <nav className="relative z-0 inline-flex rounded-md shadow-sm" aria-label="Pagination">
                         <button
                             onClick={prevPage}
                             disabled={!pagination.hasPrevPage}

@@ -50,7 +50,7 @@ function classNames(...classes: any) {
 
 const ProductDetail = () => {
     const { slug }: any = useParams()
-    const { url, add_to_cart } = useContext(UserContext)
+    const { add_to_cart } = useContext(UserContext)
     const { sendRequest: fetch_product, isLoading, error } = useHttp()
     const [product, setProduct] = useState<Product>()
     const [cartState, dispatchCartState] = useReducer(cartReducer, { id: null, attributes: [], name: null, quantity: null, price: null })
@@ -80,8 +80,8 @@ const ProductDetail = () => {
     }
 
     const getProduct = useCallback(() => {
-        return fetch_product({ url: `${url}/products/?slug=${slug}` }, set_product)
-    }, [slug, fetch_product, url]);
+        return fetch_product({ url: `${import.meta.env.REACT_APP_REST_API_URL}/products/?slug=${slug}` }, set_product)
+    }, [slug, fetch_product]);
 
     useEffect(() => {
         getProduct()

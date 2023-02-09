@@ -49,6 +49,8 @@ export default interface Order {
     totalPrice: number
     updatedAt: string
     _id: string
+    canceled?: { status: boolean, reason: string },
+
 }
 
 export interface OrderInfo {

@@ -14,7 +14,7 @@ const Filters: React.FC = () => {
     const adminCtx = useContext(AdminContext)
     const prodductCtx = useContext(productsContext)
 
-    const { categories, fetch_categories, authMeta, } = adminCtx
+    const { categories, fetch_categories } = adminCtx
     const { update_meta, productsMeta } = prodductCtx
     const [refresh, doRefresh] = useState(0);
 
@@ -42,17 +42,15 @@ const Filters: React.FC = () => {
     }
 
     useEffect(() => {
-        if (authMeta.token) {
-            fetch_categories(authMeta.token)
-        }
+        fetch_categories()
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [authMeta.token])
+    }, [])
     return (
         <>
 
             <div className='flex flex-wrap'>
                 <div className='p-2 mb-2 text-left'>
-                    <label htmlFor="desc" >Category</label>
+                    <label htmlFor="desc" className='text-xs font-bold text-gray-700'>Category</label>
                     {categories.length > 0 && <MultiSelect
                         options={categories.map((i) => ({ val: i._id, label: i.name }))}
                         trackBy="val"
@@ -69,7 +67,7 @@ const Filters: React.FC = () => {
                     />}
                 </div>
                 <div className='p-2 mb-2 text-left'>
-                    <label htmlFor="featured" >Featured</label>
+                    <label htmlFor="featured" className='text-xs font-bold text-gray-700'>Featured</label>
                     <MultiSelect
                         options={[{ val: true, label: 'True' }, { val: false, label: 'False' }]}
                         trackBy="val"
@@ -90,7 +88,7 @@ const Filters: React.FC = () => {
                     />
                 </div>
                 <div className='p-2 mb-2 text-left'>
-                    <label htmlFor="featured" >Popular</label>
+                    <label htmlFor="featured" className='text-xs font-bold text-gray-700'>Popular</label>
                     <MultiSelect
                         options={[{ val: true, label: 'True' }, { val: false, label: 'False' }]}
                         trackBy="val"
@@ -111,7 +109,7 @@ const Filters: React.FC = () => {
                     />
                 </div>
                 <div className='p-2 mb-2 text-left'>
-                    <label htmlFor="price" >Price Range</label>
+                    <label htmlFor="price" className='text-xs font-bold text-gray-700'>Price Range</label>
                     <MultiRangeSlider
                         min={0}
                         max={3000}
@@ -121,7 +119,7 @@ const Filters: React.FC = () => {
                     />
                 </div>
                 <div className='p-2 mb-2 text-left'>
-                    <label htmlFor="price" >Quantity</label>
+                    <label htmlFor="price" className='text-xs font-bold text-gray-700'>Quantity</label>
                     <MultiRangeSlider
                         min={0}
                         max={10000}

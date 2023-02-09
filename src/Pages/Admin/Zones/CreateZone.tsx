@@ -1,8 +1,6 @@
-import React, { useContext, useReducer, useEffect, useState, FormEventHandler } from 'react'
-import { useHistory } from 'react-router-dom'
+import React, { useContext, useReducer, useEffect, useState } from 'react'
 
-import AdminContext from '../../../store/Admin/admin-context'
-import { NotificationModalContext } from '../../../store/Notification/notification-context'
+import ZoneContext from '../../../store/Admin/zones-context'
 
 
 enum ActionKind {
@@ -33,10 +31,7 @@ const inputReducer = (state: InputState, action: Action) => {
 
 
 const CreateZone: React.FC = () => {
-    const ctx = useContext(AdminContext)
-    const notificationCtx = useContext(NotificationModalContext)
-
-    const history = useHistory()
+    const zonesCtx = useContext(ZoneContext)
 
     const [nameState, dispatchNameState] = useReducer(inputReducer, { value: '', isValid: false })
     const [priceState, dispatchPriceState] = useReducer(inputReducer, { value: '', isValid: false })
@@ -80,7 +75,6 @@ const CreateZone: React.FC = () => {
     }
 
 
-
     const saveNewZone = async (e: React.FormEvent) => {
         e.preventDefault()
         const form = new FormData()
@@ -89,25 +83,7 @@ const CreateZone: React.FC = () => {
         form.append('governorate', governorateState.value)
         form.append('notes', notesState.value)
         form.append('id', zoneNoState.value)
-        try {
-            const response = await fetch(`http://localhost:8000/admin/api/zones`, {
-                method: 'POST',
-                headers: {
-                    Authorization: "Bearer " + ctx.authMeta.token,
-                },
-                body: form
-            })
-            const json = await response.json()
-            if (response.status === 201 || response.status === 200) {
-                notificationCtx.showModal({ title: 'Success', message: 'New Zone Has Been Successfully Created' })
-                return history.push('/admin/zones')
-            }
-            notificationCtx.showModal({ title: 'Error', message: json.message })
-
-        } catch (error) {
-            notificationCtx.showModal({ title: 'Error', message: 'Something went wrong' })
-
-        }
+        zonesCtx.create_zone(form)
 
     }
     const { isValid: nameValid } = nameState

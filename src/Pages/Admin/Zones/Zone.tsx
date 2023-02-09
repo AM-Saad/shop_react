@@ -12,18 +12,17 @@ const Zone = () => {
     const { id }: any = params
     const adminCtx = useContext(AdminContext)
     const zonesCtx = useContext(ZonesContext)
-    const { token } = adminCtx.authMeta
     const { currentZone, zonesMeta, fetch_zone, delete_zone } = zonesCtx
     const [openConfirmDeleteModal, setOpenConfirmDeleteModal] = useState<boolean>(false)
     const deleteZone = () => {
-        if (currentZone) delete_zone(currentZone?._id, token)
+        if (currentZone) delete_zone(currentZone?._id,)
     }
     useEffect(() => {
-        if (token) {
-            fetch_zone(id, token)
+        if (id) {
+            fetch_zone(id)
         }
         return
-    }, [token, id])
+    }, [id])
 
 
 
@@ -32,7 +31,7 @@ const Zone = () => {
     }
 
     if (!zonesMeta.loading && zonesMeta.error) {
-        return <FetchError error={zonesMeta.error} reload={() => fetch_zone(id, token)} />
+        return <FetchError error={zonesMeta.error} reload={() => fetch_zone(id)} />
 
     }
     return (

@@ -29,7 +29,7 @@ const Categories = () => {
         <div className="p-4 sm:p-6">
 
             <div className=' mb-5  flex items-center justify-between'>
-                <h1 className="font-boldtext-2xl text-left">Category</h1>
+                <h1 className="font-bold text-2xl text-left">Category</h1>
                 <Link to={`/admin/category/create`} className=' py-2 px-4 text-sm bg-green-400 rounded hover:opacity-70 text-white'>New Category</Link>
             </div>
             <Filters />

@@ -21,6 +21,7 @@ interface Props {
     refresh?: any
 }
 
+
 const MultiSelect: React.FC<Props> = ({ options, multiple, closeOnSelect, placeholder, id, label, trackBy, disabled, input, preSelected = [], refresh }) => {
     const [selected, setSelected] = useState<any[]>(preSelected)
     const [filtered, setFiltered] = useState<any[]>(options)
@@ -91,20 +92,20 @@ const MultiSelect: React.FC<Props> = ({ options, multiple, closeOnSelect, placeh
                 id={id}
                 className="multiple-select border border-gray-200 p-1 rounded-md w-64"
             >
-                <div
-                    ref={itemsMenu} >
+                <div ref={itemsMenu}>
 
-                    <div className={`selected-list flex items-center flex-wrap gap-1 ${(!multiple && selected.length === 1) && 'p-2'}`}>
+                    <div className={`selected-list flex items-center flex-wrap gap-1 ${(!multiple && selected.length === 1) && 'p-1'}`}>
                         {(selected !== null && selected.length > 0) && selected.map((option: any, idx: number) => {
                             return <>
                                 {multiple && <BadgeWithDelete key={idx - 1} id={option[trackBy]} onDelete={remove} label={option[label]} />}
-                                {!multiple && <p key={option[trackBy]}>{option[label]}</p>}
+                                {!multiple && <p key={option[trackBy]} className='text-xs'>{option[label]}</p>}
                             </>
                         })}
                     </div>
+
                     {(listIsOpen || (!listIsOpen && multiple) || (!multiple && selected.length === 0)) &&
                         <input
-                            className='multiple-select_input my-2 focus:outline-none w-full pl-1'
+                            className='multiple-select_input my-1 focus:outline-none w-full pl-1 text-xs'
                             type="text"
                             placeholder={placeholder}
                             ref={searchinput}
@@ -115,7 +116,7 @@ const MultiSelect: React.FC<Props> = ({ options, multiple, closeOnSelect, placeh
                     {listIsOpen && <ul className='multiple-select_list'>
                         {filtered.length > 0 && filtered.map((option, idx) =>
                             <li
-                                className={`p-2 my-1 rounded-md cursor-pointer hover:bg-gray-200  ${checkIfSelected(option[trackBy]) ? 'font-medium bg-gray-50' : ''}`}
+                                className={`p-2 text-xs my-1 rounded-md cursor-pointer hover:bg-gray-200  ${checkIfSelected(option[trackBy]) ? 'font-medium bg-gray-50' : ''}`}
                                 key={option[label] + idx}
                                 onClick={(e) => {
                                     e.stopPropagation()
@@ -123,8 +124,9 @@ const MultiSelect: React.FC<Props> = ({ options, multiple, closeOnSelect, placeh
                                 }}
                             >
                                 {option[label]}
-                            </li>)}
-                        {filtered.length === 0 && <p>Nothing here</p>}
+                            </li>
+                        )}
+                        {filtered.length === 0 && <p className='text-xs text-gray-600 my-2'>Nothing here</p>}
                     </ul>}
                 </div>
 

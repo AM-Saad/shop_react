@@ -97,8 +97,8 @@ const MultiRangeSlider: React.FC<Props> = ({ onChange, min, max, refresh }) => {
             <div className=" relative w-64">
                 <div className=" rounded-md h-1 w-full bg-gray-300" />
                 <div ref={range} className="z-30 bg-indigo-700" />
-                <input className=" absolute text-gray-400 mt-3 text-sm w-14 p-1" type="number" min="0" max={maxVal} value={minVal} onChange={changeMinValue} />
-                <input className="right-1 absolute text-gray-400 mt-3 text-sm w-14 p-1" type="number" min="0" max={maxVal} value={maxVal} onChange={changeMaxValue} />
+                <input className=" absolute text-gray-400 mt-3 text-xs w-16 p-1" type="number" min="0" max={maxVal} value={minVal} onChange={changeMinValue} />
+                <input className="right-1 absolute text-gray-400 mt-3 text-xs w-16 p-1" type="number" min="0" max={maxVal} value={maxVal} onChange={changeMaxValue} />
             </div>
         </div>
     )

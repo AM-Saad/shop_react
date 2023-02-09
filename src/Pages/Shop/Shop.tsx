@@ -4,7 +4,10 @@ import FeaturedProducts from '../../components/Shop/FeaturedProducts/FeaturedPro
 import MainProducts from '../../components/Shop/MainProducts/MainProducts'
 const Shop = () => {
   return (
-    <div className="min-h-full max-w-2xl mx-auto py-16 px-4  sm:px-6 lg:max-w-7xl lg:px-8">
+    <div className="min-h-full  mx-auto py-16 px-4  sm:px-6 lg:max-w-7xl lg:px-8">
+      <div>
+        
+      </div>
       <Categories />
       <FeaturedProducts />
       <MainProducts />

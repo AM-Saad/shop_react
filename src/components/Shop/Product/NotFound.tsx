@@ -8,7 +8,7 @@ const NotFound: React.FC = () => {
     const inputRef: any = useRef()
     const [inputVal, setInputVal] = useState('')
     const [searchList, setSearchList] = useState<Product[]>([])
-    const { url, search_products } = useContext(UserContext)
+    const {  search_products } = useContext(UserContext)
 
     const searchHandler = () => {
         setInputVal(inputRef?.current?.value)
@@ -71,7 +71,7 @@ const NotFound: React.FC = () => {
                             <a className='flex items-center justify-between space-x-3' href={`/products/${product.slug}`}>
                                 <div className="min-w-0 flex-1 flex items-center space-x-3">
                                     <div className="flex-shrink-0">
-                                        <img className="h-10 w-10 rounded-full" src={url + product.images[0]} alt="" />
+                                        <img className="h-10 w-10 rounded-full" src={import.meta.env.REACT_APP_REST_API_URL + product.images[0]} alt="" />
                                     </div>
                                     <div className="min-w-0 flex-1">
                                         <p className="text-sm font-medium text-gray-900 truncate">{product.name}</p>

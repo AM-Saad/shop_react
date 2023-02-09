@@ -1,23 +1,23 @@
 import React from 'react'
 import { Switch } from '@headlessui/react'
-function classNames(...classes) {
+function classNames(...classes:any) {
     return classes.filter(Boolean).join(' ')
 }
-const ToggleBtn = (props) => {
+const ToggleBtn = (props:any) => {
     return (
         <Switch
             checked={props.value}
-            onChange={props.onSetValue}
+            onChange={props.onChange}
             className={classNames(
                 props.value ? 'main-bg-color' : 'bg-gray-200',
-                'relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500'
+                'relative inline-flex flex-shrink-0 h-5 w-10 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500'
             )}
         >
             <span className="sr-only">Toggle</span>
             <span
                 className={classNames(
                     props.value ? 'translate-x-5' : 'translate-x-0',
-                    'pointer-events-none relative inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200'
+                    'pointer-events-none relative inline-block h-4 w-4 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200'
                 )}
             >
                 <span

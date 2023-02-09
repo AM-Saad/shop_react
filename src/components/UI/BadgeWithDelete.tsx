@@ -4,7 +4,7 @@ const BadgeWithDelete: React.FC<{ id: any, label: string, onDelete: (item: strin
     return (
         <>
 
-            <span className="inline-flex rounded-full items-center py-0.5 pl-2.5 pr-1 mx-1 text-sm font-medium bg-indigo-100 text-indigo-700">
+            <span className="inline-flex rounded-full items-center py-0.5 pl-2.5 pr-1 mx-1 text-xs font-medium bg-indigo-50 text-indigo-700">
                 {props.label}
                 <button
                     onClick={() => props.onDelete(props.id)}

@@ -23,7 +23,7 @@ const SingleZone: React.FC<{ zone: Zone }> = ({ zone }) => {
           <EditableInput
             label='Name'
             inputType="text"
-            onSave={(value: string | number) => zonesCtx.update_partial_zone([{ name: value }], token)}
+            onSave={(value: string | number) => zonesCtx.update_partial_zone([{ name: value }])}
             defaultVal={zone.name}
             loading={updatingMeta.loading}
             validationMessage={'Name is required'}
@@ -34,7 +34,7 @@ const SingleZone: React.FC<{ zone: Zone }> = ({ zone }) => {
           <EditableInput
             label='Shipping Price'
             inputType="text"
-            onSave={(value: string | number) => zonesCtx.update_partial_zone([{ name: value }], token)}
+            onSave={(value: string | number) => zonesCtx.update_partial_zone([{ shipping: value }])}
             defaultVal={zone.shipping}
             loading={updatingMeta.loading}
             validationMessage={'Shipping Price is required'}
@@ -45,7 +45,7 @@ const SingleZone: React.FC<{ zone: Zone }> = ({ zone }) => {
           <EditableInput
             label='Zone Number'
             inputType="number"
-            onSave={(value: string | number) => zonesCtx.update_partial_zone([{ zoneId: value }], token)}
+            onSave={(value: string | number) => zonesCtx.update_partial_zone([{ zoneId: value }])}
             defaultVal={zone.zoneId}
             loading={updatingMeta.loading}
             validationMessage={'Zone Number is required'}
@@ -56,7 +56,7 @@ const SingleZone: React.FC<{ zone: Zone }> = ({ zone }) => {
           <EditableInput
             label='Notes'
             inputType="text"
-            onSave={(value: string | number) => zonesCtx.update_partial_zone([{ notes: value }], token)}
+            onSave={(value: string | number) => zonesCtx.update_partial_zone([{ notes: value }])}
             defaultVal={zone.notes}
             loading={updatingMeta.loading}
           />

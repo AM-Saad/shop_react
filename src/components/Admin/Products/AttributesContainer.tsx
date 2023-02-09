@@ -32,9 +32,9 @@ const AttributesContainer: React.FC<{ updateAttributes: (attributes: Attribute[]
 
     }, [attributes])
     return (
-        <div className='p-4 mb-3 text-left'>
+        <div className='text-left my-5'>
             <div className='flex justify-between'>
-                <label htmlFor="desc" >Attributes</label>
+                <label htmlFor="desc" className='text-xs font-medium'>Attributes</label>
                 <button
                     onClick={addNewAttributeLine}
                     type="button"
@@ -43,6 +43,8 @@ const AttributesContainer: React.FC<{ updateAttributes: (attributes: Attribute[]
                     <PlusSmIconSolid className="h-5 w-5" aria-hidden="true" />
                 </button>
             </div>
+            {attributes.length === 0 && <h4 className='text-gray-400 text-xs'>No Attributes</h4>}
+
             {attributes.length > 0 && attributes.map((attribute) => <AttributeLine key={attribute._id} attribute={attribute} updateAttributes={(attribute: Attribute) => updateAttributes(attribute)} onDelete={(id: string | number) => deleteAttributeLine(id)} />)}
 
         </div>

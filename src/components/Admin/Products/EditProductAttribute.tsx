@@ -19,6 +19,7 @@ const AttributesContainer: React.FC<{ defaultVal: Attribute[], loading: boolean,
     }
 
     const deleteAttributeLine = (id: string | number) => {
+        console.log(attributes)
         setAttributes((prevState) => prevState.filter(i => i.attrNo !== id))
     }
 
@@ -45,7 +46,7 @@ const AttributesContainer: React.FC<{ defaultVal: Attribute[], loading: boolean,
     return (
         <div className="text-left border-b-1-g mb-6 pb-2 border-b-2">
             <div className="flex items-center mb-2 mt-3">
-                <span className="text-xl text-gray-600 mb-2 mr-2">Attributes</span>
+                <span className="text-xs font-medium text-gray-600 mb-2 mr-2">Attributes</span>
                 <EditIcon isEdit={isEdit} startEdit={() => { setIsEdit(true) }} />
             </div>
             <div className={`${isEdit ? 'block' : 'hidden'}`}>

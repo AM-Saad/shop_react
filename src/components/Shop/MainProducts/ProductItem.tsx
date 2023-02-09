@@ -1,15 +1,14 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import Product from '../../../models/ProductResponse'
-import AuthContext from '../../../store/User/user_context'
-import { Link } from 'react-router-dom'
+
 
 const ProductItem: React.FC<{ product: Product }> = ({ product }) => {
-    const { url } = useContext(AuthContext)
+  
     return (
         <li data-testid="products" role="listitem" className="group relative">
             <div className="w-full min-h-80 bg-gray-200 aspect-w-1 aspect-h-1 rounded-md overflow-hidden group-hover:opacity-75 lg:h-80 lg:aspect-none">
                 <img
-                    src={url + product.images[0]}
+                    src={import.meta.env.REACT_APP_REST_API_URL + product.images[0]}
                     alt={product.name}
                     className="w-full h-full object-center object-cover lg:w-full lg:h-full"
                 />

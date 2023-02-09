@@ -75,6 +75,7 @@ const EditableInput: React.FC<Props> = ((props, ref) => {
   }
   const submit = (): void => {
     setValidationError(null)
+    setIsTouched(true)
     if (required && isEmptyOrSpaces(newVal)) {
       return setValidationError(validationMessage || 'This field is required!')
     }
@@ -106,7 +107,6 @@ const EditableInput: React.FC<Props> = ((props, ref) => {
 
 
   useEffect(() => {
-    console.log(error, defaultVal)
     setNewVal(defaultVal)
   }, [defaultVal, error])
 
@@ -115,11 +115,11 @@ const EditableInput: React.FC<Props> = ((props, ref) => {
     <>
       <div className="editable-input text-left border-b-1-g mb-6 pb-2 border-b" key={id} id={id}>
         <div className="flex items-center mb-2 mt-3">
-          <label htmlFor={`update_${label}`} className="text-xl text-gray-600 mr-3 editable-input_label">{label}</label>
+          <label htmlFor={`update_${label}`} className="text-xs font-medium text-gray-600 mr-3 editable-input_label">{label}</label>
           <EditIcon isEdit={isEditing} startEdit={() => setIsEditing(true)} />
         </div>
 
-        {!isEditing && <p className={` mr-5  font-medium text-lg editable-input_value`}>{newVal || 'n.c.'}</p>}
+        {!isEditing && <p className={` mr-5  font-medium text-xs editable-input_value`}>{newVal || 'n.c.'}</p>}
         {isEditing && <div >
           <input
             onFocus={() => setIsTouched(true)}
@@ -134,10 +134,15 @@ const EditableInput: React.FC<Props> = ((props, ref) => {
             defaultValue={newVal} />
           <p className='text-red-400 mt-2 editable-input_error'>{validationError}</p>
           <div className="flex justify-end gap-2 mt-3">
-            <button type="button" className="shadow py-2 px-4 text-sm bg-gray-400 rounded hover:opacity-70 text-white editable-input_cancel" onClick={cancel}>{loading ? `${cancelBtnText ? cancelBtnText : 'Cancel'}...` : `${cancelBtnText ? cancelBtnText : 'Cancel'}`}</button>
             <button
               type="button"
-              className={`shadow py-2 px-4 text-sm bg-green-500 rounded hover:opacity-70 text-white editable-input_update ${(isEditing && error) ? 'opacity-70' : ''}`}
+              className="shadow py-1.5 px-4 text-sm bg-gray-400 rounded hover:opacity-70 text-white editable-input_cancel"
+              onClick={cancel}>
+              {loading ? `${cancelBtnText ? cancelBtnText : 'Cancel'}...` : `${cancelBtnText ? cancelBtnText : 'Cancel'}`}
+            </button>
+            <button
+              type="button"
+              className={`shadow py-1.5 px-4 text-sm bg-green-500 rounded hover:opacity-70 text-white editable-input_update ${(isEditing && error) ? 'opacity-70' : ''}`}
               onClick={submit}>{loading ? `${updateBtnText ? updateBtnText : 'Update'}...` : `${updateBtnText ? updateBtnText : 'Update'}`}</button>
           </div>
         </div>}

@@ -19,7 +19,6 @@ const Search: React.FC = () => {
     const [orders, setOrders] = useState<Order[]>([])
     const [categories, setCategories] = useState<CategoryInterface[]>([])
 
-    const { url } = useContext(AdminContext)
     const width: number = useWindowsResize()
     const dropdownRef = useRef(null);
 
@@ -53,7 +52,7 @@ const Search: React.FC = () => {
 
     const setSearch = async (query: string) => {
         if (query.length > 0) {
-            search_request({ url: `${url}/admin/api/search?search=${query}` }, update_search)
+            search_request({ url: `${import.meta.env.REACT_APP_REST_API_URL}/admin/api/search?search=${query}` }, update_search)
         }
 
     }

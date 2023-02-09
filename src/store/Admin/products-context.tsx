@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { NotificationModalContext } from "../Notification/notification-context"
 import { useHistory, useLocation } from "react-router-dom"
 
 import ProductsType from '../../models/ProductsContext';
@@ -7,6 +6,12 @@ import ProductResponse, { ProductsMeta } from '../../models/ProductResponse';
 import Pagination from '../../models/Pagination';
 import Meta from '../../models/Meta';
 import serialize from '../../util/serialize';
+import Response, { State } from '../../models/Respone';
+import { toast } from "react-toastify";
+
+import { ProductRepository } from '../../lib/ProductRepository'
+const ProductRepo = new ProductRepository();
+
 const initialPagination = {
     itemsPerPage: 4,
     currentPage: 1,
@@ -23,12 +28,13 @@ const ProductsContext = React.createContext<ProductsType>({
     productsMeta: { loading: true, error: null, filters: {} },
     pagination: initialPagination,
     currentProduct: null,
-    fetch_products: (token: string | null) => { },
-    fetch_product: (id: string, token: string | null) => { },
-    delete_product: (id: string, token: string | null) => { },
-    update_partial_product: (json_patch: any, token: string | null) => { },
-    upload_image: (id: string, files: any, token: string | null, tag: string) => { },
-    delete_image: (id: string, image: string, token: string | null, tag: string) => { },
+    create_product: (form: FormData) => { },
+    fetch_products: () => { },
+    fetch_product: (id: string) => { },
+    delete_product: (id: string) => { },
+    update_partial_product: (json_patch: any) => { },
+    upload_image: (id: string, files: any, tag: string) => Promise.resolve() as any,
+    delete_image: (id: string, image: string, tag: string) => Promise.resolve() as any,
     updatingMeta: { loading: true, error: null },
     update_meta: (data: any) => { },
     update_pagination: (data: Pagination) => { }
@@ -45,15 +51,29 @@ export const ProductsContextProvider: React.FC<{ children?: React.ReactNode; }> 
 
     const [updatingMeta, setUpdatingMeta] = useState<Meta>({ loading: false, error: null })
 
-    const notificationCtx = useContext(NotificationModalContext)
     const [searchMeta, setSearchMeta] = useState<Meta>({ loading: false, error: null })
 
 
 
-    const fetch_products = async (token: string | null) => {
-        setProductsMeta((prevState => {
-            return { ...prevState, loading: true, error: null }
-        }))
+    const create_product = async (form: FormData) => {
+        setUpdatingMeta((prevState => { return { ...prevState, loading: true, error: null } }))
+
+        const { state, message, items }: Response = await ProductRepo.create_product(form)
+
+        setUpdatingMeta((prevState => { return { ...prevState, loading: false } }))
+        toast[state](message)
+
+        if (state === State.SUCCESS) {
+            return history.push(`/admin/products/${items.slug}`)
+        }
+
+        setUpdatingMeta((prevState => { return { ...prevState, loading: false, error: message } }))
+
+    }
+
+    const fetch_products = async () => {
+
+        setProductsMeta((prevState => { return { ...prevState, loading: true, error: null } }))
         const { name, featured, popular, id, slug, min, max, minQty, maxQty, category } = productsMeta.filters
         const params = new Map<string, string | string[]>();
         if (name) params.set("name", name);
@@ -70,220 +90,93 @@ export const ProductsContextProvider: React.FC<{ children?: React.ReactNode; }> 
         }
         const paramsUrl = serialize(params)
 
-        try {
-            const response = await fetch(`http://localhost:8000/admin/api/items?page=${pagination.currentPage}&&itemsPerPage=${pagination?.itemsPerPage}&&${paramsUrl}`, {
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    Authorization: "Bearer " + token,
+        const { state, message, items }: Response = await ProductRepo.fetch_products(pagination, paramsUrl)
 
-                }
-            })
-            const json = await response.json()
-            setProductsMeta((prevState => {
-                return { ...prevState, loading: false, error: null }
-            }))
-            if (response.status === 200) {
-                if (json.pagination) {
-                    setPagination(json.pagination)
-                }
-                return setProducts(json.items)
-            }
-            setProductsMeta((prevState => {
-                return { ...prevState, loading: false, error: json.message }
-            }))
-
-
-        } catch (error) {
-            setProductsMeta((prevState => {
-                return { ...prevState, loading: false, error: 'Something went wrong' }
-            }))
-
+        setProductsMeta((prevState => { return { ...prevState, loading: false, error: null } }))
+        if (state === State.SUCCESS) {
+            setPagination(items.pagination)
+            return setProducts(items.items)
         }
+        setProductsMeta((prevState => { return { ...prevState, error: message } }))
+
+
     }
-    const fetch_product = async (id: string, token: string | null) => {
-        setProductsMeta((prevState => {
-            return { ...prevState, loading: true, error: null }
-        }))
-        try {
-            const response = await fetch(`http://localhost:8000/admin/api/items/${id}`, {
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    Authorization: "Bearer " + token,
+    const fetch_product = async (id: string) => {
+        setProductsMeta((prevState => { return { ...prevState, loading: true, error: null } }))
+        const { state, message, items }: Response = await ProductRepo.fetch_product(id)
 
-                }
-            })
-            const json = await response.json()
-            setProductsMeta((prevState => {
-                return { ...prevState, loading: false, error: null }
-            }))
-            if (response.status === 200) {
-                if (json.pagination) {
-                    setProductsMeta((prevState => {
-                        return { ...prevState, pagination: json.pagination }
-                    }))
-                }
-                return setCurrentProduct(json.item)
-            }
-            setProductsMeta((prevState => {
-                return { ...prevState, loading: false, error: json.message }
-            }))
-
-        } catch (error) {
-            setProductsMeta((prevState => {
-                return { ...prevState, loading: false, error: 'Something went wrong' }
-            }))
-
-
+        setProductsMeta((prevState => { return { ...prevState, loading: false } }))
+        if (state === State.SUCCESS) {
+            return setCurrentProduct(items)
         }
+        setProductsMeta((prevState => { return { ...prevState, error: message } }))
+
     }
-    const update_partial_product = async (json_patch: any, token: string | null) => {
+    const update_partial_product = async (json_patch: any) => {
         setUpdatingMeta({ loading: true, error: null })
 
-        try {
-            const response = await fetch(`http://localhost:8000/admin/api/items/${currentProduct?._id}`, {
-                method: 'PATCH',
-                body: JSON.stringify({ values: json_patch }),
-                headers: {
-                    Authorization: "Bearer " + token,
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            })
-            const json = await response.json()
-            setUpdatingMeta({ loading: false, error: null })
-            if (response.status === 200) {
-                console.log(json.item)
-                window.history.pushState({}, '', `/admin/products/${json.item.slug}`);
+        const { state, message, items }: Response = await ProductRepo.update_partial_product(currentProduct?._id!, json_patch)
 
-                return setCurrentProduct(json.item)
-            }
-            notificationCtx.showModal({ title: 'Error', message: json.message })
-
-            return setUpdatingMeta({ loading: false, error: null })
-
-
-        } catch (error) {
-            notificationCtx.showModal({ title: 'Error', message: 'Something went wrong' })
-            return setUpdatingMeta({ loading: false, error: null })
-
-
+        setUpdatingMeta({ loading: false, error: null })
+        if (state === State.SUCCESS) {
+            toast.success(message)
+            window.history.pushState({}, '', `/admin/products/${items.slug}`);
+            return setCurrentProduct(items)
         }
+        toast.error(message)
+        return setUpdatingMeta({ loading: false, error: message })
+
+
     }
-    const delete_product = async (id: string, token: string | null) => {
+    const delete_product = async (id: string) => {
         setProductsMeta((prevState => {
             return { ...prevState, loading: true, error: null }
         }))
 
-        try {
-            const response = await fetch(`http://localhost:8000/admin/api/items/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    Authorization: "Bearer " + token,
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            })
-            const json = await response.json()
-            setProductsMeta((prevState => {
-                return { ...prevState, loading: false, error: null }
-            }))
-            if (response.status === 200) {
-                notificationCtx.showModal({ title: 'Success', message: json.message })
-                return history.push('/admin/products')
-
-            }
-            notificationCtx.showModal({ title: 'Error', message: json.message })
-
-            setProductsMeta((prevState => {
-                return { ...prevState, loading: false, error: null }
-            }))
+        const { state, message, items }: Response = await ProductRepo.delete_product(currentProduct?._id!)
 
 
-        } catch (error) {
-            notificationCtx.showModal({ title: 'Error', message: 'Something went wrong' })
-            return setProductsMeta((prevState => {
-                return { ...prevState, loading: false, error: 'Something went wrong' }
-            }))
-
+        setProductsMeta((prevState => { return { ...prevState, loading: false } }))
+        if (state === State.SUCCESS) {
+            toast.success(message)
+            return history.push('/admin/products')
 
         }
+        toast.error(message)
+        setProductsMeta((prevState => { return { ...prevState, loading: false, error: message } }))
+
     }
-    const upload_image = async (id: string, files: any, token: string | null, tag: string) => {
+    const upload_image = async (id: string, files: any, tag: string): Promise<any> => {
         setUpdatingMeta({ loading: true, error: null })
 
-        try {
-            const newForm = new FormData()
-            for (const img of files) {
-                console.log(img)
-                newForm.append('image', img)
-            }
-            // files.forEach(img => ))
-            const response = await fetch(`http://localhost:8000/admin/api/images/${id}/?type=upload&&tag=${tag}`, {
-                method: 'PUT',
-                body: newForm,
-                headers: {
-                    Authorization: "Bearer " + token,
-                }
-            })
-            const json = await response.json()
-            setUpdatingMeta({ loading: false, error: null })
-            if (response.status === 200) {
-                if (tag === 'Product') {
-                    return setCurrentProduct((prevState) => {
-                        return { ...prevState!, images: json.item.images }
-                    })
-                } else {
-                    // return setCurrentCategory(json.item)
-                }
-            }
-            notificationCtx.showModal({ title: 'Error', message: json.message })
-            return setUpdatingMeta({ loading: false, error: json.message })
+        const newForm = new FormData()
+        for (const img of files) newForm.append('image', img)
 
-        } catch (error) {
-            notificationCtx.showModal({ title: 'Error', message: 'Something went wrong' })
-            return setUpdatingMeta({ loading: false, error: null })
+        const { state, message, items }: Response = await ProductRepo.upload_image(id, tag, newForm)
 
+        setUpdatingMeta({ loading: false, error: null })
 
+        if (state === State.SUCCESS) {
+            setCurrentProduct(items)
+            return items
         }
+        toast.error(message)
+        return setUpdatingMeta({ loading: false, error: message })
+
+
     }
-    const delete_image = async (id: string, image: string, token: string | null, tag: string) => {
+    const delete_image = async (id: string, image: string, tag: string): Promise<any> => {
         setUpdatingMeta({ loading: true, error: null })
 
-        try {
-
-            const response = await fetch(`http://localhost:8000/admin/api/images/${id}?type=delete&&tag=${tag}`, {
-                method: 'PUT',
-                body: JSON.stringify({ image: image }),
-                headers: {
-                    Authorization: "Bearer " + token,
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            })
-            const json = await response.json()
-            setUpdatingMeta({ loading: false, error: null })
-            if (response.status === 200) {
-                if (tag === 'Product') {
-                    console.log(json.item)
-                    return setCurrentProduct((prevState) => {
-                        return { ...prevState!, images: json.item.images }
-                    })
-                }
-            }
-            notificationCtx.showModal({ title: 'Error', message: json.message })
-
-            return setUpdatingMeta({ loading: false, error: json.message })
-
-
-        } catch (error) {
-            console.error(error)
-            notificationCtx.showModal({ title: 'Error', message: 'Something went wrong' })
-            return setUpdatingMeta({ loading: false, error: null })
-
-
+        const { state, message, items }: Response = await ProductRepo.delete_image(id, tag, image)
+        setUpdatingMeta({ loading: false, error: null })
+        if (state === State.SUCCESS) {
+            setCurrentProduct(items)
+            return items
         }
+        toast.error(message)
+        return setUpdatingMeta({ loading: false, error: message })
+
     }
 
 
@@ -291,45 +184,30 @@ export const ProductsContextProvider: React.FC<{ children?: React.ReactNode; }> 
     const search_products = async (query: string): Promise<ProductResponse[]> => {
         setSearchMeta((prevState) => { return { ...prevState, loading: true, error: null } })
 
-        try {
-            const response = await fetch(`http://localhost:8000/search?q=${query}`, {
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                }
-            })
-            const json = await response.json()
-            if (response.status === 200) {
-                setSearchMeta((prevState) => { return { ...prevState, user: json.user, loading: false, error: null } })
-                const items: ProductResponse[] = json.items
-                return items
-            }
-            setSearchMeta((prevState) => { return { ...prevState, loading: false, error: 'Something went wrong...' } })
-            return []
-
-        } catch (error) {
-            setSearchMeta((prevState) => { return { ...prevState, loading: false, error: 'Something went wrong.' } })
-            return []
-
+        const { items, message, state }: Response = await ProductRepo.search_products(query)
+        if (state === State.SUCCESS) {
+            return items
         }
+        setSearchMeta((prevState) => { return { ...prevState, loading: false, error: message } })
+        return []
     }
-    const update_pagination = async (data: Pagination) => {
-        return setPagination(data)
-    }
+
     const update_meta = async (data: any) => {
         setPagination(prevState => { return { ...prevState, currentPage: 1 } })
-        console.log(data)
         setProductsMeta(prevState => { return { ...prevState, ...data } })
     }
-    const logout = () => {
-        localStorage.removeItem('uid')
-    }
+
+    const update_pagination = async (data: Pagination) => setPagination(data)
+
+
+    const logout = () => localStorage.removeItem('uid')
 
 
     useEffect(() => {
         update_pagination(initialPagination)
     }, [])
     const ctx = {
+        create_product,
         fetch_products,
         fetch_product,
         update_partial_product,

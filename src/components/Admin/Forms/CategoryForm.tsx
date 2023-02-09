@@ -4,6 +4,8 @@ import UploadImage from '../../UI/UploadImageInput'
 import BadgeWithDelete from '../../UI/BadgeWithDelete'
 import Category from '../../../models/Category'
 import ToggleBtn from '../../UI/ToggleBtn'
+import AttributesContainer from '../Products/AttributesContainer'
+import Attribute from '../../../models/Attribute'
 
 enum ActionKind {
     USER_INPUT = 'USER_INPUT',
@@ -32,7 +34,7 @@ const nameReducer = (state: InputState, action: Action) => {
     return state
 }
 
-const NewProductForm: React.FC<{ onNewCategory: (newCategory: Category) => void }> = (props) => {
+const CategoryForm: React.FC<{ onNewCategory: (newCategory: Category) => void }> = (props) => {
 
     const [nameState, dispatchNameState] = useReducer(nameReducer, { value: '', isValid: false })
     const [subCategories, setSubCategories] = useState<string[]>([])
@@ -122,11 +124,11 @@ const NewProductForm: React.FC<{ onNewCategory: (newCategory: Category) => void 
 
                     <div className=''>
                         <label htmlFor="desc" className='block mb-2'>Featured</label>
-                        <ToggleBtn value={featured} onSetValue={setFeatured}></ToggleBtn>
+                        <ToggleBtn value={featured} onChange={setFeatured}></ToggleBtn>
                     </div>
                     <div className=''>
                         <label htmlFor="desc" className='block mb-2'>Active</label>
-                        <ToggleBtn value={active} onSetValue={setActive}></ToggleBtn>
+                        <ToggleBtn value={active} onChange={setActive}></ToggleBtn>
                     </div>
                 </div>
                 <div className='p-4 mb-3 text-left'>
@@ -149,4 +151,4 @@ const NewProductForm: React.FC<{ onNewCategory: (newCategory: Category) => void 
     )
 }
 
-export default NewProductForm
+export default CategoryForm

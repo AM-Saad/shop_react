@@ -11,27 +11,24 @@ const Product = () => {
     const { slug }: any = params
     const adminCtx = useContext(AdminContext)
     const productsCtx = useContext(ProductsContext)
-    const { token } = adminCtx.authMeta
-    const { currentProduct, productsMeta, fetch_product,  delete_product } = productsCtx
+    const { currentProduct, productsMeta, fetch_product, delete_product } = productsCtx
     const [openConfirmDeleteModal, setOpenConfirmDeleteModal] = useState<boolean>(false)
 
 
     const cofirmDeleteProduct = () => {
-        if (currentProduct) delete_product(currentProduct?._id!, token)
+        if (currentProduct) delete_product(currentProduct?._id!)
     }
 
     useEffect(() => {
-        if (token) {
-            fetch_product(slug, token)
-        }
-    }, [token, slug])
+        fetch_product(slug)
+    }, [slug])
 
     if (productsMeta.loading) {
         return <p>Loading...</p>
     }
 
     if (!productsMeta.loading && productsMeta.error) {
-        return <FetchError error={productsMeta.error} reload={() => fetch_product(slug, token)} />
+        return <FetchError error={productsMeta.error} reload={() => fetch_product(slug)} />
     }
     if (currentProduct) {
         return (

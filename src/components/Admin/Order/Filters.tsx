@@ -81,8 +81,8 @@ const Filters: React.FC = () => {
     return (
         <>
             <div className='flex flex-wrap'>
-                <div className='p-2 mb-2 text-left'>
-                    <label htmlFor="status" >Status</label>
+                <div className='p-1 mb-2 text-left'>
+                    <label htmlFor="status" className='block text-xs mb-1'>Status</label>
                     <MultiSelect
                         options={tranformedStatus}
                         trackBy="value"
@@ -97,10 +97,10 @@ const Filters: React.FC = () => {
                     />
                 </div>
 
-                <div className='p-2 mb-2 text-left relative'>
-                    <label htmlFor="status" className='block' >Date Range</label>
+                <div className='p-1 mb-2 text-left relative'>
+                    <label htmlFor="status" className='block text-xs mb-1' >Date Range</label>
                     <input
-                        className={`block border border-gray-200 p-3 rounded-md w-64 cursor-pointer ${range === 'Select date range' ? 'text-gray-400' : ''}`}
+                        className={`block border border-gray-200 p-2 rounded-md w-64 cursor-pointer text-xs ${range === 'Select date range' ? 'text-gray-400' : ''}`}
                         readOnly
                         type="text"
                         onClick={() => setIsDatePickerOpened(true)}
@@ -121,7 +121,7 @@ const Filters: React.FC = () => {
                 </div>
 
                 <div className='p-2 mb-2 text-left'>
-                    <label htmlFor="price" >Price Range</label>
+                    <label htmlFor="price" className='block text-xs mb-1'>Price Range</label>
                     <MultiRangeSlider
                         min={0}
                         max={3000}
@@ -131,7 +131,7 @@ const Filters: React.FC = () => {
                 </div>
 
                 <div className='p-2 mb-2 text-left'>
-                    <label htmlFor="price" >Quantity</label>
+                    <label htmlFor="price" className='block text-xs mb-1'>Quantity</label>
                     <MultiRangeSlider
                         min={0}
                         max={10000}

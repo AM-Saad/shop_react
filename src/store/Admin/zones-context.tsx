@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { NotificationModalContext } from "../Notification/notification-context"
 import { useHistory } from "react-router-dom"
 
 import ZonesContextType from '../../models/ZonesContext';
@@ -7,6 +6,10 @@ import Pagination from '../../models/Pagination';
 import Zone, { ZonesMeta } from '../../models/Zone';
 import Meta from '../../models/Meta';
 import serialize from '../../util/serialize';
+import { ZoneRepository } from '../../lib/ZoneRepository';
+import Response, { State } from '../../models/Respone';
+import { toast } from "react-toastify";
+const ZoneRepo = new ZoneRepository()
 const initialPagination = {
     itemsPerPage: 10,
     currentPage: 1,
@@ -23,10 +26,11 @@ const ZonesContext = React.createContext<ZonesContextType>({
     zonesMeta: { loading: true, error: null, filters: {} },
     pagination: initialPagination,
     currentZone: null,
-    fetch_zones: (token?: string) => { },
-    fetch_zone: (id: string, token: string | null) => { },
-    delete_zone: (id: string, token: string | null) => { },
-    update_partial_zone: (json_patch: any, token: string | null) => { },
+    fetch_zones: () => { },
+    fetch_zone: (id: string) => { },
+    create_zone: (form: any) => { },
+    delete_zone: (id: string) => { },
+    update_partial_zone: (json_patch: any) => { },
     updatingMeta: { loading: false, error: null },
     update_meta: (data: any) => { },
     update_pagination: (data: Pagination) => { }
@@ -40,146 +44,80 @@ export const ZonesContextProvider: React.FC<{ children?: React.ReactNode; }> = (
     const [zones, setZones] = useState([])
     const [updatingMeta, setUpdatingMeta] = useState<Meta>({ loading: false, error: null })
     const [pagination, setPagination] = useState(initialPagination)
-    const notificationCtx = useContext(NotificationModalContext)
 
-    const fetch_zones = async (token?: string) => {
+
+    const fetch_zones = async () => {
 
         setZonesMeta((prevState => { return { ...prevState, loading: true, error: null } }))
-        try {
-            const response = await fetch(`http://localhost:8000/admin/api/zones?page=${pagination.currentPage}&&itemsPerPage=${pagination?.itemsPerPage}`, {
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    Authorization: "Bearer " + token,
-
-                }
-            })
-
-            const json = await response.json()
-
-            setZonesMeta((prevState => {
-                return { ...prevState, loading: false, error: null }
-            }))
-            if (response.status === 200) {
-                if (json.pagination) {
-                    setZonesMeta((prevState => {
-                        return { ...prevState, pagination: json.pagination }
-                    }))
-                }
-                return setZones(json.items)
-            }
-            return setZonesMeta((prevState => {
-                return { ...prevState, loading: false, error: json.message }
-            }))
+        const { state, message, items }: Response = await ZoneRepo.fetch_zones(pagination, '')
 
 
-        } catch (error) {
-            setZonesMeta((prevState => {
-                return { ...prevState, loading: false, error: 'Something went wrong' }
-            }))
+        setZonesMeta((prevState => { return { ...prevState, loading: false } }))
+        if (state === State.SUCCESS) {
+            setPagination(items.pagination)
+            return setZones(items.zones)
+        }
+        return setZonesMeta((prevState => { return { ...prevState, error: message } }))
 
+
+    }
+    const fetch_zone = async (id: string) => {
+        setZonesMeta((prevState => { return { ...prevState, loading: true, error: null } }))
+        const { state, message, items }: Response = await ZoneRepo.fetch_zone(id)
+
+        setZonesMeta((prevState => { return { ...prevState, loading: false } }))
+        if (state === State.SUCCESS) {
+            return setCurrentZone(items)
+        }
+        return setZonesMeta((prevState => { return { ...prevState, error: message } }))
+
+    }
+    const create_zone = async (form: any) => {
+        setZonesMeta((prevState => { return { ...prevState, loading: true, error: null } }))
+        const { state, message, items }: Response = await ZoneRepo.create_zone(form)
+
+        setZonesMeta((prevState => { return { ...prevState, loading: false } }))
+        if (state === State.SUCCESS) {
+            toast.success(message)
+
+            return history.push(`/admin/zones/${items._id}`)
 
         }
+        toast.error(message)
+
+        return setZonesMeta((prevState => { return { ...prevState, error: message } }))
+
     }
-    const fetch_zone = async (id: string, token: string | null) => {
-        setZonesMeta((prevState => {
-            return { ...prevState, loading: true, error: null }
-        }))
-        try {
-            const response = await fetch(`http://localhost:8000/admin/api/zones/${id}`, {
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    Authorization: "Bearer " + token,
 
-                }
-            })
-            const json = await response.json()
-            setZonesMeta((prevState => {
-                return { ...prevState, loading: false, error: null }
-            }))
-            if (response.status === 200) {
-                return setCurrentZone(json.item)
-            }
-            return setZonesMeta((prevState => {
-                return { ...prevState, loading: false, error: json.message }
-            }))
+    const delete_zone = async (id: string) => {
+        setZonesMeta((prevState => { return { ...prevState, loading: true, error: null } }))
 
-        } catch (error) {
-            setZonesMeta((prevState => {
-                return { ...prevState, loading: false, error: 'Something went wrong' }
-            }))
+        const { state, message, items }: Response = await ZoneRepo.delete_zone(id)
 
+        setZonesMeta((prevState => { return { ...prevState, loading: false } }))
+
+        if (state === State.SUCCESS) {
+
+            toast.success(message)
+            return history.push('/admin/zones')
 
         }
+        toast.error(message)
+        setZonesMeta((prevState => { return { ...prevState, error: message } }))
+
+
     }
 
-    const delete_zone = async (id: string, token: string | null) => {
-
-        setZonesMeta((prevState => {
-            return { ...prevState, loading: true, error: null }
-        }))
-
-        try {
-            const response = await fetch(`http://localhost:8000/admin/api/zones/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    Authorization: "Bearer " + token,
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            })
-            const json = await response.json()
-            setZonesMeta((prevState => {
-                return { ...prevState, loading: false, error: null }
-            }))
-            if (response.status === 200) {
-                notificationCtx.showModal({ title: 'Success', message: json.message })
-                return history.push('/admin/zones')
-
-            }
-            notificationCtx.showModal({ title: 'Error', message: json.message })
-
-            setZonesMeta((prevState => {
-                return { ...prevState, loading: false, error: null }
-            }))
-
-
-
-        } catch (error) {
-            notificationCtx.showModal({ title: 'Error', message: 'Something went wrong' })
-
-            return setZonesMeta((prevState => {
-                return { ...prevState, loading: false, error: null }
-            }))
-
-
-        }
-    }
-
-    const update_partial_zone = async (json_patch: any, token: string | null) => {
+    const update_partial_zone = async (json_patch: any) => {
         setUpdatingMeta({ loading: true, error: null })
-        try {
-            const response = await fetch(`http://localhost:8000/admin/api/zones/${currentZone?._id}`, {
-                method: 'PATCH',
-                body: JSON.stringify({ values: json_patch }),
-                headers: {
-                    Authorization: "Bearer " + token,
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            })
-            const json = await response.json()
-            setUpdatingMeta({ loading: false, error: null })
-            if (response.status === 200) {
-                return setCurrentZone(json.item)
-            }
-            return notificationCtx.showModal({ title: 'Error', message: json.message })
+        const { state, message, items }: Response = await ZoneRepo.update_partial_zone(currentZone?._id!, json_patch)
 
-        } catch (error) {
-            notificationCtx.showModal({ title: 'Error', message: 'Something went wrong' })
-            return setUpdatingMeta({ loading: false, error: null })
+        setUpdatingMeta({ loading: false, error: null })
+        if (state === State.SUCCESS) {
+            return setCurrentZone(items)
         }
+        toast.error(message)
+
     }
 
 
@@ -203,6 +141,7 @@ export const ZonesContextProvider: React.FC<{ children?: React.ReactNode; }> = (
         zonesMeta,
         fetch_zones,
         fetch_zone,
+        create_zone,
         delete_zone,
         update_partial_zone,
         updatingMeta,

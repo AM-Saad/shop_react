@@ -6,13 +6,12 @@ import { OrderItem } from '../../../models/Order'
 const OrderItemRow: React.FC<{ item: OrderItem }> = ({ item }) => {
 
     const adminCtx = useContext(AdminContext)
-    const { url } = adminCtx
 
     return (
         <li className="flex">
             <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                 <img
-                    src={url + item?.image || ''}
+                    src={import.meta.env.REACT_APP_REST_API_URL + item?.image || ''}
                     alt={item.name}
                     className="h-full w-full object-cover object-center bg-gray-100"
                 />

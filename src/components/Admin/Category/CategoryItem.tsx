@@ -13,7 +13,7 @@ const CategoryItem: React.FC<{ category: CategoryInterface }> = (props) => {
                     <div className="flex items-center px-4 py-4 sm:px-6">
                         <div className="min-w-0 flex-1 flex items-center">
                             <div className="flex-shrink-0">
-                                <img className="h-12 w-12 rounded-full" src={adminCtx.url + category.image} alt="" />
+                                <img className="h-12 w-12 rounded-full object-cover" src={import.meta.env.REACT_APP_REST_API_URL + category.image} alt="" />
                             </div>
                             <div className="min-w-0 flex-1 px-4 md:grid md:grid-cols-2 md:gap-4">
                                 <div>

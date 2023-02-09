@@ -31,7 +31,6 @@ interface ProductResponse {
 
 
 export interface ProductsMeta extends Meta {
-    pagination?: PaginationType
     filters: {
         name?: string | null;
         id?: string | null;

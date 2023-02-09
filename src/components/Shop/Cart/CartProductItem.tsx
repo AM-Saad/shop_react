@@ -7,7 +7,7 @@ import { CartItem } from '../../../models/Cart'
 
 
 const CartProductItem: React.FC<{ product: CartItem }> = ({ product }) => {
-    const { delete_cart_item, update_cart_item, url } = useContext(UserContext)
+    const { delete_cart_item, update_cart_item } = useContext(UserContext)
     const updateQuantity = (val: number) => {
         update_cart_item?.(product._id, val)
     }
@@ -16,7 +16,7 @@ const CartProductItem: React.FC<{ product: CartItem }> = ({ product }) => {
         <li className="flex py-6">
             <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                 <img
-                    src={url + product.image}
+                    src={import.meta.env.REACT_APP_REST_API_URL + product.image}
                     alt={product.name}
                     className="h-full w-full object-cover object-center"
                 />

@@ -7,7 +7,7 @@ interface Product {
     price:string;
     name:string;
     quantity:string;
-    category:{name:string, subCategory:string | null};
+    category:{name:string | null, subCategory:string | null};
     attributes:Attribute[]
     featured:boolean;
     popular:boolean;

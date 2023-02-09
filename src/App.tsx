@@ -1,7 +1,7 @@
 import './App.css';
 import { Route, Switch } from 'react-router-dom'
 
-import Login from './Pages/Shop/Login.tsx'
+import Login from './Pages/Shop/Login'
 import Shop from './Pages/Shop/Shop'
 import Category from './Pages/Shop/Category'
 import Checkout from './Pages/Shop/Checkout'
@@ -15,15 +15,14 @@ import Categories from './Pages/Admin/Category/Categories'
 import AdminCategory from './Pages/Admin/Category/Category'
 import CreateZone from './Pages/Admin/Zones/CreateZone'
 import Zones from './Pages/Admin/Zones/Zones'
-import Zone from './Pages/Admin/Zones/Zone.tsx'
+import Zone from './Pages/Admin/Zones/Zone'
 import Orders from './Pages/Admin/Orders/Orders'
-import Order from './Pages/Admin/Orders/Order.tsx'
-import Setting from './Pages/Admin/Settings/index.tsx'
+import Order from './Pages/Admin/Orders/Order'
+import Setting from './Pages/Admin/Settings'
 
 import NotFound from './Pages/NotFound'
 import Nav from './components/Layout/Nav'
 import AdminNav from './components/Layout/AdminNav'
-import NotificationModalProvider from './store/Notification/notification-context';
 import { AdminContextProvider } from './store/Admin/admin-context';
 import PrivateRoute from './components/Common/PrivateRoute'
 import ContextPrivateRoute from './components/Common/ContextPrivateRoute'
@@ -31,15 +30,15 @@ import { UserContextProvider } from './store/User/user_context';
 import { ProductsContextProvider } from './store/Admin/products-context';
 import { OrdersContextProvider } from './store/Admin/orders-context';
 import { ZonesContextProvider } from './store/Admin/zones-context';
+import React from 'react';
 
 
-function App() {
+const App:React.FC= ()=> {
 
   return (
     <div className="App  m-auto">
       <Switch>
         <Route path="/admin/:path?">
-          <NotificationModalProvider>
             <AdminContextProvider>
               <AdminNav>
 
@@ -67,10 +66,9 @@ function App() {
                 </Switch>
               </AdminNav>
             </AdminContextProvider>
-          </NotificationModalProvider>
         </Route>
 
-        <Route  >
+        <Route >
           <UserContextProvider>
             <Nav>
               <Switch>
@@ -88,10 +86,9 @@ function App() {
         <Route path="*">
           <NotFound />
         </Route>
-
       </Switch>
 
-    </div >
+    </div>
   );
 }
 

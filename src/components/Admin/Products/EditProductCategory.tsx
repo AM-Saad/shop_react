@@ -84,16 +84,16 @@ const EditProductCategory: React.FC<{ defaultVal: { name: string, subCategory: s
 
             <div className="text-left border-b-1-g mb-6 pb-2 border-b-2">
                 <div className="flex items-center mb-2 mt-3">
-                    <span className="text-xl text-gray-600 mb-2 mr-2">Category</span>
+                    <span className="text-xs font-medium text-gray-600 mb-2 mr-2">Category</span>
 
                     <EditIcon isEdit={isEditing} startEdit={() => { setIsEditing(true) }} />
                 </div>
 
-                {!isEditing && <p className="mr-5 font-medium text-lg">{initialCategory.name}</p>}
+                {!isEditing && <p className="mr-5 font-medium text-xs">{initialCategory.name}</p>}
                 {isEditing && <div >
                     <div className='p-4 mb-3 text-left'>
-                        <label htmlFor="desc" >Category</label>
-                        <select className='block border-1 border-b-2 border-gray my-2 outline-white py-2 w-full' onChange={selectCategoryHandler}
+                        <label htmlFor="desc" className='text-xs font-medium'>Category</label>
+                        <select className='block border-1 border-b-2 border-gray my-2 outline-white py-2 w-full text-xs font-medium' onChange={selectCategoryHandler}
                             name="category" id="category">
                             <option value='Default'>Default</option>
 
@@ -101,9 +101,9 @@ const EditProductCategory: React.FC<{ defaultVal: { name: string, subCategory: s
                         </select>
                     </div>
                     {subCategories && subCategories.length > 0 && <div className='p-4 mb-3 text-left'>
-                        <label htmlFor="desc" >Sub Category</label>
+                        <label htmlFor="desc" className='text-xs font-medium'>Sub Category</label>
                         <select
-                            className='block border-1 border-b-2 border-gray my-2 outline-white py-2 w-full' onChange={selectSubCategoryHandler} name="" id="">
+                            className='block border-1 border-b-2 border-gray my-2 outline-white py-2 w-full text-xs font-medium' onChange={selectSubCategoryHandler} name="" id="">
                             <option >Choose Sub Category</option>
 
                             {subCategories.map((category) => <option key={category} selected={category === initialCategory.subCategory} value={category}>{category}</option>)}

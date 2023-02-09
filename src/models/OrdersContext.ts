@@ -1,4 +1,5 @@
 
+import Meta from './Meta';
 import Order, { OrdersMeta } from './Order';
 import PaginationType from './Pagination';
 
@@ -8,12 +9,14 @@ export interface OrdersContext {
     currentOrder: Order | null,
     pagination: PaginationType,
 
-    fetch_orders: (token: string) => void,
-    fetch_order: (id: string, token: string | null) => void,
-    delete_order: (id: string, token: string | null) => void,
-    change_order_status: (status: number, token: string | null) => void,
+    fetch_orders: () => void,
+    fetch_order: (id: string) => void,
+    delete_order: (id: string) => void,
+    change_order_status: (status: number, reason?:string) => void,
+    cancel_order: (reason: string) => void,
     update_meta:(data: any) => void
     update_pagination:(data: any) => void
+    updatingMeta: Meta
 }
 
 export default OrdersContext

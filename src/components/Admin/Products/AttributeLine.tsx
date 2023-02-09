@@ -42,7 +42,7 @@ const AttributeLine: React.FC<{ attribute: Attribute, updateAttributes: (attribu
     }, [formIsValid, optionName, optionPrice, optionQty, props.attribute])
     return (
         <div key={props.attribute._id}>
-            <div className="p-4 my-3 text-left border">
+            <div className="p-4 my-3 text-left shadow rounded">
                 <div className='mb-2'>
                     <div className='flex items-center justify-between'>
 

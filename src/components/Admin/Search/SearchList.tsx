@@ -17,7 +17,6 @@ interface Props {
     onClose: () => void;
 }
 const SearchList: React.FC<Props> = ({ products, categories, orders, loading, error, onClose }) => {
-    const { url } = useContext(AdminContext)
     const isEmptySearch = useMemo(() => products.length === 0 && categories.length === 0 && orders.length === 0, [categories, products, orders]);
 
     const isFirstRender = useIsFirstRender()
@@ -48,7 +47,7 @@ const SearchList: React.FC<Props> = ({ products, categories, orders, loading, er
                             <li key={product._id} className="py-4">
                                 <div className="flex items-center space-x-4">
                                     <div className="flex-shrink-0">
-                                        <img className="h-8 w-8 rounded-full" src={url + product.images[0]} alt="" />
+                                        <img className="h-8 w-8 rounded-full" src={import.meta.env.REACT_APP_REST_API_URL + product.images[0]} alt="" />
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <p className="text-sm font-medium text-gray-900 truncate">{product.name}</p>
@@ -71,7 +70,7 @@ const SearchList: React.FC<Props> = ({ products, categories, orders, loading, er
                             <li key={item._id} className="py-4">
                                 <div className="flex items-center space-x-4">
                                     <div className="flex-shrink-0">
-                                        <img className="h-8 w-8 rounded-full" src={url + item.image} alt="" />
+                                        <img className="h-8 w-8 rounded-full" src={import.meta.env.REACT_APP_REST_API_URL + item.image} alt="" />
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <p className="text-sm font-medium text-gray-900 truncate">{item.name}</p>

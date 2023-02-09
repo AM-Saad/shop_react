@@ -1,5 +1,4 @@
 import React, { useContext, useEffect } from 'react'
-import AdminContext from '../../../store/Admin/admin-context';
 import OrderItem from '../../../components/Admin/Order/OrderItem'
 import RequestStatus from '../../../components/Admin/RequestStatus'
 import Pagination from '../../../components/Common/Pagination'
@@ -7,10 +6,8 @@ import OrdersContext from '../../../store/Admin/orders-context'
 import Filters from '../../../components/Admin/Order/Filters';
 
 const Orders: React.FC = () => {
-    const adminCtx = useContext(AdminContext)
     const ordersCtx = useContext(OrdersContext)
 
-    const { token } = adminCtx.authMeta
     const { orders, fetch_orders, ordersMeta, update_pagination, pagination } = ordersCtx
     const { loading, error, filters } = ordersMeta
     const { currentPage } = pagination
@@ -20,10 +17,8 @@ const Orders: React.FC = () => {
     }
 
     useEffect(() => {
-        if (token) {
-            fetch_orders(token)
-        }
-    }, [filters, token, currentPage])
+        fetch_orders()
+    }, [filters, currentPage])
 
 
 

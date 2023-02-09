@@ -6,7 +6,7 @@ import Product from '../../../models/ProductResponse'
 const FeatureProductItem: React.FC<{ product: Product, url: string }> = ({ product, url }) => {
     return (
         <Link key={product._id} to={'/products/' + product.slug} className="group h-5/6">
-            <div className="w-full h-full aspect-w-1 aspect-h-1 bg-gray-200 rounded-lg overflow-hidden xl:aspect-w-7 xl:aspect-h-8">
+            <div className="w-full h-full aspect-w-1 aspect-h-1 bg-gray-200 border rounded-lg overflow-hidden xl:aspect-w-7 xl:aspect-h-8">
                 <img
                     src={url + product.images[0]}
                     alt={product.name}

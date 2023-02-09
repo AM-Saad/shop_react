@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useId, useContext } from 'react'
+import { useState, useEffect, useId, useContext } from 'react'
 import UploadImage from '../../UI/UploadImageInput'
 import AdminItemGallery from '../../UI/AdminItemGallery'
 import AdminContext from '../../../store/Admin/admin-context'
@@ -11,84 +11,94 @@ type DisplayedImages = {
     isNew?: boolean
 }
 
-const Images: React.FC<{ product: ProductResponse }> = ({ product }) => {
+const Images: React.FC = () => {
 
     const id: string = useId();
 
     const adminCtx = useContext(AdminContext)
-    const productsCtx = useContext(ProductsContext)
-    const { token } = adminCtx.authMeta
-    const { updatingMeta } = adminCtx
-
+    const { delete_image,currentProduct } = useContext(ProductsContext)
+    const { updatingMeta, upload_category_image } = adminCtx
+    const [imageWarning, setImageWarning] = useState<string | null>(null)
     const [imagesToUpload, setImagesToUpload] = useState<any[]>([])
     const [imagesToDisplay, setImagesToDisplay] = useState<DisplayedImages[]>([])
 
-    const cancelUpload = useRef<any>(null)
-    const cleanInputValues = useRef<any>(null)
-
     const imageSelectHandler = (files: any) => {
+        if ((imagesToDisplay.length + files.length + imagesToUpload.length) <= 5) {
+            let allFiles = [...files]
+            const fileToUpload: any[] = []
+            const fileToPreview: any[] = []
+            for (const file of allFiles) {
+                const objectUrl: string = URL.createObjectURL(files.item(file))
 
-        setImagesToUpload((prevState) => { return [...prevState, ...files] })
-        let imagesUrls: DisplayedImages[] = []
-        for (let i = 0; i < files.length; i++) {
-            const objectUrl: string = URL.createObjectURL(files.item(i))
-            imagesUrls.push({ id: id + imagesToUpload.length + 1, image: objectUrl, isNew: true })
+                fileToUpload.push({ image: file, id: id + imagesToUpload.length, isNew: true })
+                fileToPreview.push({ image: objectUrl, id: id + imagesToUpload.length, isNew: true })
+            }
+            const images = imagesToUpload.concat(fileToUpload)
+            setImagesToUpload(images)
+            const previews = imagesToDisplay.concat(fileToPreview)
+            setImagesToDisplay(previews)
+
+            return setImageWarning(null)
         }
-        setImagesToDisplay((prevState) => prevState.concat(imagesUrls))
-
+        setImageWarning(`Maximum images is (5) you already have (${currentProduct?.images.length}) ${imagesToUpload.length > 0 ? `and you have (${imagesToUpload.length}) in the queue` : ''}`)
     }
+
 
     const cancelUploadImages = () => {
-        setImagesToUpload([])
-        cancelUpload.current()
-        const images = convertImages()
+        const images = convertImages(currentProduct?.images)
+        console.log(images)
         setImagesToDisplay(images)
+        setImagesToUpload([])
+        return setImageWarning(null)
     }
 
-    const deleteImageHandler = (id: string, isNew: boolean) => {
-
+    const deleteImageHandler = async (id: string, isNew: boolean) => {
         if (!isNew) {
-            return productsCtx.delete_image(product._id, id, token, 'Product')
+            const response = await delete_image(currentProduct?._id!, id, 'Product')
+            const converted = convertImages(response.images)
+            return setImagesToDisplay(converted)
+
         }
 
         setImagesToDisplay((prevState) => {
             return prevState.filter(i => i.id !== id)
         })
-        cancelUpload.current()
-        
-        cleanInputValues.current()
-        // Delete from the uploaded
     }
 
-    const uploadImage = () => {
-        productsCtx.upload_image(product._id, imagesToUpload, token, 'Product')
-        cancelUpload.current()
+    const uploadImage = async () => {
+        const response = await upload_category_image(currentProduct?._id!, imagesToUpload, 'Product')
+        const converted = convertImages(response.images)
+        setImagesToDisplay(converted)
         setImagesToUpload([])
-        setImagesToDisplay([])
     }
 
 
-    const convertImages = () => {
+    const convertImages = (files: any) => {
         let images: DisplayedImages[] = []
-        for (const item of product.images) {
-            images.push({ id: item, image: adminCtx.url + item })
+        for (const item of files) {
+            images.push({ id: item, image: import.meta.env?.REACT_APP_REST_API_URL + item })
         }
         return images
     }
 
     useEffect(() => {
-        const images = convertImages()
+        const images = convertImages(currentProduct?.images)
+        console.log(images)
         setImagesToDisplay(images)
-        console.log(product)
-    }, [product])
+    }, [currentProduct?.images])
+
     return (
         <div>
-            <UploadImage cancelUpload={cancelUpload} cleanInputValues={cleanInputValues} image={adminCtx.url + product.images[0]} onSelectImage={imageSelectHandler} />
+            <UploadImage onSelectImage={imageSelectHandler} />
+            {imageWarning && <p className='text-yellow-600'>{imageWarning}</p>}
+
             <AdminItemGallery images={imagesToDisplay} onDeleteImage={deleteImageHandler} />
-            {imagesToUpload.length > 0 && <div className="flex justify-end gap-2">
-                <button type="button" className=" py-2 px-4 text-sm bg-gray-400 rounded hover:opacity-70 text-white" onClick={cancelUploadImages}>Cancel</button>
-                <button type="button" className=" py-2 px-4 text-sm bg-green-400 rounded hover:opacity-70 text-white" onClick={() => uploadImage()}>{updatingMeta.loading ? 'Update...' : 'Update'}</button>
-            </div>}
+            {imagesToUpload.length > 0 &&
+                <div className="flex justify-end gap-2">
+                    <button type="button" className=" py-2 px-4 text-sm bg-gray-400 rounded hover:opacity-70 text-white" onClick={cancelUploadImages}>Cancel</button>
+                    <button type="button" className=" py-2 px-4 text-sm bg-green-400 rounded hover:opacity-70 text-white" onClick={() => uploadImage()}>{updatingMeta.loading ? 'Update...' : 'Update'}</button>
+                </div>
+            }
         </div>
     )
 }

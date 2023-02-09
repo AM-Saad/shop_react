@@ -18,7 +18,7 @@ const Modal: React.FC<Props> = ({ open, close, children, styles }) => {
     })
     return (
         <div onClick={close} className={`bg-black bg-opacity-40 p-3 sm:p-10 pt-2 ${open ? classes["modal--open"] : classes["modal--close"]}`}>
-            <div onClick={(e) => e.stopPropagation()} className={`shadow-lg rounded-md p-5 bg-white ${styles}`}>
+            <div onClick={(e) => e.stopPropagation()} className={`shadow-lg rounded-md p-1 sm:p-3 bg-white ${styles}`}>
                 <span className="bg-white border cursor-pointer flex h-8 hover:bg-gray-100 items-center justify-around ml-2 my-1 rounded-full sticky top-0 w-8" onClick={close}>X</span>
                 <span className="modalText">{children}</span>
             </div>

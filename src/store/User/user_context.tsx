@@ -6,6 +6,7 @@ import { Cart } from '../../models/Cart'
 import ProductResponse, { ProductsMeta } from '../../models/ProductResponse'
 import Pagination from '../../models/Pagination'
 import Checkout from '../../models/Checkout'
+import serialize from '../../util/serialize';
 
 const initialPagination = {
     itemsPerPage: 10,
@@ -20,11 +21,16 @@ const initialPagination = {
 }
 
 const UserContext = React.createContext<UserContextInterface>({
-    url: 'http://localhost:8000',
     isLoggedIn: false,
     authMeta: { user: null, token: null, loading: false, error: null },
+    products: [],
+    fetch_products:()=>{},
     update_products_pagination: (data: Pagination) => { },
-    productsMeta: { loading: true, error: null, pagination: initialPagination, filters: {} },
+    productsMeta: { loading: true, error: null, filters: {} },
+    products_pagination: initialPagination,
+    update_products_meta: (data: any) => { },
+    fetch_categories: () => { },
+    categories: [],
     cart: null,
     onLogin: (email: string, password: string) => { },
     onLogout: () => { },
@@ -51,13 +57,18 @@ export const UserContextProvider: React.FC<{ children?: React.ReactNode; }> = (p
     const [isLoggedIn, setIsLoggedIn] = useState(true)
     const [authMeta, setAuthMeta] = useState<AuthMeta>({ user: null, token: null, loading: false, error: null })
     const [cartMeta, setCartMeta] = useState<Meta>({ loading: false, error: null })
+    const [categoryMeta, setCategoryMeta] = useState<Meta>({ loading: false, error: null })
     const [searchMeta, setSearchMeta] = useState<Meta>({ loading: false, error: null })
     const [cartIsOpen, setCartIsOpen] = useState<boolean>(false)
     const [cart, setCart] = useState<Cart | null>(null)
     const [checkoutMeta, setCheckoutMeta] = useState<Meta>({ loading: false, error: null })
     const [zonesMeta, setZonesMeta] = useState<Meta>({ loading: false, error: null })
     const [zones, setZones] = useState([])
-    const [productsMeta, setProductsMeta] = useState<ProductsMeta>({ loading: false, error: null, pagination: initialPagination, filters: {} })
+    const [categories, setCategories] = useState([])
+    const [products, setProducts] = useState([])
+
+    const [productsMeta, setProductsMeta] = useState<ProductsMeta>({ loading: false, error: null, filters: {} })
+    const [products_pagination, setProductsPagination] = useState(initialPagination)
 
     let history = useHistory()
 
@@ -65,7 +76,7 @@ export const UserContextProvider: React.FC<{ children?: React.ReactNode; }> = (p
     const signup = async (name: string, email: string, password: string, confirmPassword: string) => {
         setAuthMeta({ ...authMeta, loading: true, error: null })
         try {
-            const response = await fetch(`http://localhost:8000/auth/signup`, {
+            const response = await fetch(`${import.meta.env.REACT_APP_REST_API_URL}/auth/signup`, {
                 method: 'POST',
                 body: JSON.stringify({ name, email, password: password, confirmPassword }), headers: {
                     'Accept': 'application/json',
@@ -90,7 +101,7 @@ export const UserContextProvider: React.FC<{ children?: React.ReactNode; }> = (p
         setAuthMeta((prevState) => { return { ...prevState, loading: true, error: null } })
 
         try {
-            const response = await fetch(`http://localhost:8000/admin/login`, {
+            const response = await fetch(`${import.meta.env.REACT_APP_REST_API_URL}/admin/login`, {
                 method: 'POST',
                 body: JSON.stringify({ email: email, password: password }), headers: {
                     'Accept': 'application/json',
@@ -119,7 +130,7 @@ export const UserContextProvider: React.FC<{ children?: React.ReactNode; }> = (p
         setAuthMeta((prevState) => { return { ...prevState, loading: true, error: null } })
 
         try {
-            const response = await fetch(`http://localhost:8000/auth/me`, {
+            const response = await fetch(`${import.meta.env.REACT_APP_REST_API_URL}/auth/me`, {
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
@@ -140,12 +151,61 @@ export const UserContextProvider: React.FC<{ children?: React.ReactNode; }> = (p
 
         }
     }
+    const fetch_products = async () => {
+        setProductsMeta((prevState => {
+            return { ...prevState, loading: true, error: null }
+        }))
+        const { name, featured, popular, id, slug, min, max, category } = productsMeta.filters
+        const params = new Map<string, string | string[]>();
+        if (name) params.set("name", name);
+        if (featured !== null && featured !== undefined) params.set("featured", featured);
+        if (popular !== null && popular !== undefined) params.set("popular", popular);
+        if (id) params.set("_id", id);
+        if (slug) params.set("slug", slug);
+        if (min) params.set("min", min);
+        if (max) params.set("max", max);
+
+        if (category && category?.length > 0) {
+            params.set("category", category.map((s) => s.toString()));
+        }
+        const paramsUrl = serialize(params)
+
+        try {
+            const response = await fetch(`${import.meta.env.REACT_APP_REST_API_URL}/products?page=${products_pagination.currentPage}&&itemsPerPage=${products_pagination?.itemsPerPage}&&${paramsUrl}`, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+
+                }
+            })
+            const json = await response.json()
+            setProductsMeta((prevState => {
+                return { ...prevState, loading: false, error: null }
+            }))
+            if (response.status === 200) {
+                if (json.pagination) {
+                    setProductsPagination(json.pagination)
+                }
+                return setProducts(json.items)
+            }
+            setProductsMeta((prevState => {
+                return { ...prevState, loading: false, error: json.message }
+            }))
+
+
+        } catch (error) {
+            setProductsMeta((prevState => {
+                return { ...prevState, loading: false, error: 'Something went wrong' }
+            }))
+
+        }
+    }
     const get_cart = async () => {
         setCartMeta((prevState) => { return { ...prevState, loading: true, error: null } })
         const cardId = localStorage.getItem('cid')
 
         try {
-            const response = await fetch(`http://localhost:8000/cart?cart=${cardId}`, {
+            const response = await fetch(`${import.meta.env.REACT_APP_REST_API_URL}/cart?cart=${cardId}`, {
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
@@ -170,7 +230,7 @@ export const UserContextProvider: React.FC<{ children?: React.ReactNode; }> = (p
         const cid = localStorage.getItem('cid')
 
         try {
-            const response = await fetch(`http://localhost:8000/cart/${payload.productId}?cart=${cid}`, {
+            const response = await fetch(`${import.meta.env.REACT_APP_REST_API_URL}/cart/${payload.productId}?cart=${cid}`, {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
@@ -198,7 +258,7 @@ export const UserContextProvider: React.FC<{ children?: React.ReactNode; }> = (p
         const cid = localStorage.getItem('cid')
 
         try {
-            const response = await fetch(`http://localhost:8000/cart/${productId}?cart=${cid}&&qty=${quantity}`, {
+            const response = await fetch(`${import.meta.env.REACT_APP_REST_API_URL}/cart/${productId}?cart=${cid}&&qty=${quantity}`, {
                 method: 'Put',
                 headers: {
                     'Accept': 'application/json',
@@ -225,7 +285,7 @@ export const UserContextProvider: React.FC<{ children?: React.ReactNode; }> = (p
         const cid = localStorage.getItem('cid')
 
         try {
-            const response = await fetch(`http://localhost:8000/cart/${productId}?cart=${cid}`, {
+            const response = await fetch(`${import.meta.env.REACT_APP_REST_API_URL}/cart/${productId}?cart=${cid}`, {
                 method: 'DELETE',
                 headers: {
                     'Accept': 'application/json',
@@ -251,7 +311,7 @@ export const UserContextProvider: React.FC<{ children?: React.ReactNode; }> = (p
         const cid = localStorage.getItem('cid')
 
         try {
-            const response = await fetch(`http://localhost:8000/checkout?cart=${cid}`, {
+            const response = await fetch(`${import.meta.env.REACT_APP_REST_API_URL}/checkout?cart=${cid}`, {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
@@ -281,7 +341,7 @@ export const UserContextProvider: React.FC<{ children?: React.ReactNode; }> = (p
         setSearchMeta((prevState) => { return { ...prevState, loading: true, error: null } })
 
         try {
-            const response = await fetch(`http://localhost:8000/search?q=${query}`, {
+            const response = await fetch(`${import.meta.env.REACT_APP_REST_API_URL}/search?q=${query}`, {
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
@@ -303,11 +363,12 @@ export const UserContextProvider: React.FC<{ children?: React.ReactNode; }> = (p
         }
     }
 
+    
     const fetch_zones = async () => {
         setZonesMeta({ loading: true, error: null })
 
         try {
-            const response = await fetch(`http://localhost:8000/zones`, {
+            const response = await fetch(`${import.meta.env.REACT_APP_REST_API_URL}/zones`, {
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
@@ -324,10 +385,53 @@ export const UserContextProvider: React.FC<{ children?: React.ReactNode; }> = (p
             return setZonesMeta({ loading: false, error: 'Something went wrong' })
         }
     }
+
+
+
+    const fetch_categories = async () => {
+        setCategoryMeta((prevState => {
+            return { ...prevState, loading: true, error: null }
+        }))
+        // const { active, featured } = categoryMeta.filters
+
+        // const params = new Map<string, string | string[]>();
+        // if (featured !== null && featured !== undefined) params.set("featured", featured);
+        // if (active !== null && active !== undefined) params.set("active", active);
+        // const paramsUrl = serialize(params)
+        try {
+            const response = await fetch(`${import.meta.env.REACT_APP_REST_API_URL}/categories`, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+
+                }
+            })
+            const json = await response.json()
+            setCategoryMeta((prevState => {
+                return { ...prevState, loading: false, error: null }
+            }))
+            if (response.status === 200) {
+
+                return setCategories(json.items)
+            }
+
+            return setCategoryMeta((prevState => {
+                return { ...prevState, loading: false, error: json.message }
+            }))
+        } catch (error) {
+            return setCategoryMeta((prevState => {
+                return { ...prevState, loading: false, error: 'Something went wrong' }
+            }))
+
+        }
+    }
+
     const update_products_pagination = async (data: Pagination) => {
-        return setProductsMeta((prevState) => {
-            return { ...prevState, pagination: data }
-        })
+        return setProductsPagination(data)
+    }
+    const update_products_meta = async (data: any) => {
+        setProductsPagination(prevState => { return { ...prevState, currentPage: 1 } })
+        setProductsMeta(prevState => { return { ...prevState, ...data } })
     }
     const logout = () => {
         setIsLoggedIn(false)
@@ -363,12 +467,16 @@ export const UserContextProvider: React.FC<{ children?: React.ReactNode; }> = (p
         zonesMeta,
         productsMeta,
         update_products_pagination,
-        url: 'http://localhost:8000'
+        update_products_meta,
+        categories,
+        fetch_categories,
+        products,
+        fetch_products,
+        products_pagination
     }
 
     useEffect(() => {
         const uid = localStorage.getItem('uid')
-        const cid = localStorage.getItem('cid')
         if (uid) {
             setIsLoggedIn(true)
             setAuthMeta((prevState => { return { ...prevState, token: uid.toString(), loading: true } }))
